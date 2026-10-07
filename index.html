@@ -112,6 +112,7 @@
     let selected = presets[0];
     let requestSerial = 0;
     let searchTimer;
+    let searchSerial = 0;
     let lastRefreshAt = 0;
 
     function cnTime(value) { return new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(value)); }
@@ -147,7 +148,8 @@
       });
     }
     async function load(city, force=false) {
-      selected=city; suggestions.replaceChildren(); input.value=city.name;
+      selected=city;
+      if(!force) { ++searchSerial; clearTimeout(searchTimer); suggestions.replaceChildren(); input.value=city.name; }
       const serial=++requestSerial;
       status.textContent='正在获取 '+city.name+' 的预报…';
       if(!force) days.replaceChildren();
@@ -158,11 +160,14 @@
       } catch(error) { if(serial===requestSerial) { status.textContent=error.message; lastRefreshAt=Date.now(); if(!days.children.length) document.getElementById('updatedAt').textContent='暂未取得有效预报'; } }
     }
     async function search() {
+      clearTimeout(searchTimer);
+      const serial=++searchSerial;
       const q=input.value.trim(); suggestions.replaceChildren();
       if(q.length<2) { if(q) status.textContent='请至少输入两个字搜索城市。'; return; }
       try {
         const data=await citiesDirect(q);
-        if(q!==input.value.trim()) return;
+        if(serial!==searchSerial || q!==input.value.trim()) return;
+        suggestions.replaceChildren();
         if(!data.cities.length) { status.textContent='没有找到该城市，可以试试完整地名。'; return; }
         status.textContent='';
         data.cities.forEach(city=>{
@@ -170,7 +175,7 @@
           line(button,'span','',city.name); line(button,'small','',city.admin1 || '中国地区');
           button.addEventListener('click',()=>load(city)); suggestions.appendChild(button);
         });
-      } catch(error) { status.textContent=error.message; }
+      } catch(error) { if(serial===searchSerial && q===input.value.trim()) status.textContent=error.message; }
     }
     document.getElementById('searchButton').addEventListener('click',search);
     input.addEventListener('input',()=>{ clearTimeout(searchTimer); if(!input.value.trim()) { suggestions.replaceChildren(); return; } searchTimer=setTimeout(search,350); });
