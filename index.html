@@ -3,79 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="giscus:backlink" content="https://wzxining.github.io/xiaguang-forecast/">
   <meta name="theme-color" content="#101725">
   <title>霞光观测站 · 朝霞晚霞观赏指数</title>
-  <style>
-    :root { color-scheme: dark; --ink:#f9f5ef; --muted:#b9bccb; --edge:rgba(255,255,255,.13); --panel:rgba(18,25,40,.72); --orange:#ffc4a0; --peach:#ff8b76; --blue:#8fb8ed; }
-    * { box-sizing:border-box; }
-    body { margin:0; min-height:100vh; color:var(--ink); font:16px/1.55 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; background:linear-gradient(180deg,#121c32 0%,#273951 38%,#794e5c 72%,#db806e 100%) fixed; }
-    body:before { content:""; position:fixed; inset:0; pointer-events:none; opacity:.42; background:radial-gradient(circle at 78% 24%,rgba(255,188,132,.35),transparent 24%),radial-gradient(circle at 23% 68%,rgba(95,147,213,.27),transparent 31%); }
-    .wrap { width:min(1160px,calc(100% - 36px)); margin:0 auto; position:relative; }
-    header { padding:27px 0; display:flex; align-items:center; justify-content:space-between; gap:16px; border-bottom:1px solid var(--edge); }
-    .brand { font-size:19px; font-weight:750; letter-spacing:.08em; white-space:nowrap; }
-    .brand i { display:inline-block; width:28px; height:28px; margin-right:11px; vertical-align:-7px; border-radius:50%; background:linear-gradient(145deg,#fff0cb,#ff8e78 60%,#aa6bad); box-shadow:0 0 25px rgba(255,155,114,.45); }
-    .eyebrow { color:#ffd4b0; font-size:12px; letter-spacing:.2em; font-weight:700; }
-    .top-note { color:var(--muted); font-size:13px; text-align:right; }
-    main { padding:58px 0 82px; }
-    .hero { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(330px,.95fr); align-items:center; gap:40px; }
-    h1 { font-size:clamp(36px,5vw,68px); line-height:1.12; margin:13px 0 19px; letter-spacing:-.045em; }
-    .intro { color:#dee1e9; max-width:600px; font-size:17px; margin:0 0 30px; }
-    .searchbox { position:relative; max-width:540px; }
-    .searchrow { display:flex; align-items:center; background:#f9f5f0; color:#273145; border-radius:16px; padding:6px 6px 6px 18px; box-shadow:0 18px 45px rgba(11,16,35,.23); }
-    .searchrow span { color:#997b76; font-size:19px; margin-right:9px; }
-    .searchrow input { flex:1; min-width:0; border:0; outline:0; background:transparent; font:inherit; color:#182536; }
-    .searchrow input::placeholder { color:#807e84; }
-    button { font:inherit; cursor:pointer; }
-    .searchrow button { border:0; background:#273953; color:white; border-radius:11px; padding:10px 16px; font-size:14px; }
-    .suggestions { position:absolute; z-index:10; top:calc(100% + 8px); left:0; right:0; background:#fffaf5; color:#223047; border-radius:13px; box-shadow:0 22px 38px #10192f55; overflow:hidden; }
-    .suggestions:empty { display:none; }
-    .suggestions button { width:100%; border:0; display:flex; justify-content:space-between; gap:12px; padding:12px 17px; background:transparent; color:inherit; text-align:left; }
-    .suggestions button:hover,.suggestions button:focus-visible { background:#f5e6de; }
-    .suggestions small { color:#77808c; }
-    .quick { display:flex; gap:8px; flex-wrap:wrap; margin-top:15px; }
-    .quick button { border:1px solid #ffffff50; background:#ffffff17; color:#fdf8f3; border-radius:999px; padding:6px 13px; font-size:13px; }
-    .quick button:hover,.quick button:focus-visible { background:#ffffff36; }
-    .illustration { height:370px; border-radius:28px; overflow:hidden; position:relative; border:1px solid #ffffff29; background:linear-gradient(180deg,#223353 0%,#aa6c76 55%,#f2ae86 73%,#263b55 100%); box-shadow:0 30px 55px rgba(14,21,38,.27); }
-    .illustration:before { content:""; position:absolute; width:198px; height:198px; border-radius:50%; left:51%; top:26%; transform:translateX(-50%); background:linear-gradient(#fff7d4,#ffd3a6); box-shadow:0 0 75px 35px #ffc09e88; }
-    .cloud { position:absolute; width:150%; height:100px; left:-15%; border-radius:50%; background:#ffffff22; filter:blur(9px); }
-    .cloud.one { top:88px; transform:rotate(7deg); }
-    .cloud.two { top:168px; left:10%; background:#372f5988; transform:rotate(-9deg); }
-    .ridge { position:absolute; bottom:-28px; left:-8%; width:120%; height:134px; background:#263a53; border-radius:55% 50% 0 0; transform:rotate(-5deg); box-shadow:0 -22px 0 #41527155; }
-    .photo-caption { position:absolute; z-index:1; bottom:18px; left:22px; right:22px; display:flex; justify-content:space-between; color:#fff6ee; font-size:12px; letter-spacing:.12em; }
-    .section-head { display:flex; justify-content:space-between; align-items:end; gap:16px; margin:70px 0 21px; }
-    h2 { margin:4px 0 0; font-size:27px; letter-spacing:-.03em; }
-    .section-meta { text-align:right; color:#d6d9e3; font-size:13px; }
-    .status { padding:17px 20px; border:1px solid var(--edge); border-radius:15px; background:#142338a8; margin-bottom:20px; }
-    .status:empty { display:none; }
-    .days { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:15px; }
-    .day { border:1px solid var(--edge); border-radius:20px; background:var(--panel); backdrop-filter:blur(12px); padding:22px; box-shadow:0 16px 40px #111a2a22; }
-    .day h3 { margin:0 0 20px; font-size:17px; font-weight:650; }
-    .date-sub { font-size:12px; color:var(--muted); margin-left:8px; font-weight:400; }
-    .event { border-top:1px solid var(--edge); padding:18px 0 3px; }
-    .event:first-of-type { border:0; padding-top:0; }
-    .event-top { display:flex; justify-content:space-between; align-items:start; gap:8px; }
-    .event-name { font-size:13px; color:var(--muted); letter-spacing:.1em; }
-    .event-time { font-size:20px; font-weight:650; margin-top:2px; font-variant-numeric:tabular-nums; }
-    .score { font-size:33px; font-weight:750; line-height:1; color:#ffd5a8; font-variant-numeric:tabular-nums; }
-    .score.low { color:#aab8cb; }
-    .score.good { color:#ffd0a2; }
-    .score small { font-size:12px; font-weight:400; color:var(--muted); }
-    .meter { width:100%; height:5px; border-radius:9px; background:#ffffff22; overflow:hidden; margin:12px 0 10px; }
-    .meter b { display:block; height:100%; border-radius:9px; background:linear-gradient(90deg,#8aabd9,#f6b7a1,#ffde9c); }
-    .grade { font-size:12px; color:#ffd2b8; }
-    .reason { color:#cdd1db; font-size:13px; margin:6px 0 0; min-height:40px; }
-    .explain { margin-top:22px; padding:22px 25px; border-radius:18px; background:#121d30b8; border:1px solid var(--edge); color:#d6dbe5; font-size:14px; }
-    .explain strong { color:white; }
-    footer { display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; padding:23px 0 35px; border-top:1px solid var(--edge); color:#e0dce2; font-size:12px; }
-    a { color:#fff0cb; }
-    @media (max-width:820px) { main { padding-top:38px; } .hero { grid-template-columns:1fr; gap:28px; } .illustration { height:220px; } .days { grid-template-columns:1fr; } .section-head { margin-top:45px; } }
-    @media (max-width:520px) { .wrap { width:min(100% - 26px,1160px); } header { padding:18px 0; } .top-note { display:none; } .intro { font-size:15px; } .section-head { display:block; } .section-meta { text-align:left; margin-top:6px; } .day { padding:19px; } }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="wrap">
-    <header><div class="brand"><i></i>霞光观测站</div><div class="top-note">朝霞 · 晚霞 · 中国地区<br>未来三日观赏参考 · 每五分钟刷新</div></header>
+    <header><a class="brand" href="#home"><i></i>霞光观测站</a><nav aria-label="主导航"><a id="homeNav" href="#home" aria-current="page">霞光预报</a><a id="meNav" href="#me">我的观霞</a><button id="loginNav" class="soft" type="button">GitHub 登录</button></nav></header>
     <main>
+    <div id="homePage">
       <section class="hero">
         <div>
           <div class="eyebrow">CHASE THE LIGHT</div>
@@ -90,101 +27,42 @@
         <div class="illustration" role="img" aria-label="夕阳照亮云层和山脊的插画"><div class="cloud one"></div><div class="cloud two"></div><div class="ridge"></div><div class="photo-caption"><span>日落之后，云仍可能被照亮</span><span>°</span></div></div>
       </section>
       <section aria-live="polite">
-        <div class="section-head"><div><div class="eyebrow">THE FORECAST</div><h2 id="locationTitle">成都 · 霞光预报</h2></div><div id="updatedAt" class="section-meta">正在获取最新预报…</div></div>
+        <div class="section-head"><div><div class="eyebrow">THE FORECAST</div><h2 id="locationTitle">成都 · 霞光预报</h2><button id="saveCity" class="soft small" type="button">☆ 收藏城市</button></div><div id="updatedAt" class="section-meta">正在获取最新预报…</div></div>
         <div id="status" class="status"></div>
         <div id="days" class="days"></div>
         <div class="explain"><strong>这个指数怎样计算？</strong> 它综合日出、日落前后的低云、中高云、降水可能性和能见度，属于实验性观赏参考。数值越高表示模型给出的观赏条件越好，<strong>不代表出现霞光的概率，也不保证实际景象</strong>。山地、局地云雾和远方云层会带来偏差。</div>
       </section>
+      <section id="placesSection" aria-labelledby="placesTitle">
+        <div class="section-head"><div><div class="eyebrow">FIND YOUR VIEW</div><h2 id="placesTitle">成都 · 去哪里等霞光</h2></div><div class="section-meta">把喜欢的地点，留给下一次出发</div></div>
+        <p id="placesNote" class="muted" aria-live="polite"></p>
+        <div id="places" class="place-grid"></div>
+        <div class="actions"><button id="morePlaces" class="soft" type="button">查找附近更多候选点</button><a id="mapCity" target="_blank" rel="noopener">在地图中找景点 ↗</a></div>
+        <p class="fine">资料中有日出或日落记录的地点会标明时段；地图候选点尚未核实视野。城市预报不等于景点现场天气，出发前请查看开放、预约和交通信息。</p>
+      </section>
+    </div>
+    <section id="mePage" hidden>
+      <div class="eyebrow">MY LIGHT JOURNAL</div><h1 class="profile-title">我的观霞</h1>
+      <div class="account-card"><div><h2 id="accountName">访客收藏夹</h2><p id="accountNote">可先收藏城市和景点。使用下方留言区的 GitHub 登录后，可查看自己的留言。</p></div><button id="profileLogin" class="soft" type="button">前往登录 / 留言</button></div>
+      <p class="fine">收藏按 GitHub 账号保存在当前浏览器，不会自动同步到其他电脑；访客收藏单独保存。留言保存在公开的 GitHub 仓库，可跨设备查看。</p>
+      <div class="section-head"><h2>收藏的城市</h2><span id="cityCount" class="section-meta"></span></div><div id="savedCities" class="place-grid"></div>
+      <div class="section-head"><h2>收藏的景点</h2><span id="spotCount" class="section-meta"></span></div><div id="savedSpots" class="place-grid"></div>
+      <div class="actions"><button id="exportFavorites" class="soft small" type="button">导出收藏</button><label class="soft small import-label">导入收藏<input id="importFavorites" type="file" accept="application/json,.json"></label></div>
+    </section>
+    <section id="feedback" aria-labelledby="feedbackTitle">
+      <div class="section-head"><div><div class="eyebrow">LEAVE A LITTLE LIGHT</div><h2 id="feedbackTitle">留言与反馈</h2></div><a href="https://github.com/wzxining/xiaguang-forecast/discussions" target="_blank" rel="noopener">仓库留言区 ↗</a></div>
+      <p id="feedbackNote" class="muted">使用 GitHub 账号登录后留言，支持反馈问题、补充城市机位和分享观霞记录。留言公开可见。</p>
+      <p class="fine">没有账号？<a href="https://github.com/signup" target="_blank" rel="noopener">注册 GitHub</a>。首次登录需同意 Giscus 代表你发布留言；本站不接触你的 GitHub 密码。</p>
+      <div id="commentStatus" class="fine" role="status">正在连接留言服务…</div><button id="retryComments" class="soft small" type="button">重新连接留言</button><div class="giscus"></div>
+      <a id="myDiscussion" hidden target="_blank" rel="noopener">在 GitHub 打开我的留言记录 ↗</a>
+    </section>
+    <div id="toast" role="status" aria-live="polite"></div>
     </main>
-    <footer><span>霞光观测站 · 中国标准时间 UTC+8</span><span>气象数据：<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>；地点搜索数据基于 <a href="https://www.geonames.org/" target="_blank" rel="noopener">GeoNames</a>。预测规则由本站提供。</span></footer>
+    <footer><span>霞光观测站 · 中国标准时间 UTC+8</span><span>气象数据：<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>；城市索引：<a href="https://github.com/88250/city-geo" target="_blank" rel="noopener">City Geo</a>（木兰宽松许可证第2版）；在线搜索：<a href="https://www.geonames.org/" target="_blank" rel="noopener">GeoNames</a>；候选地点：<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a>（ODbL）。</span></footer>
   </div>
+  <script src="cities.js"></script>
+  <script src="spots.js"></script>
   <script src="weather.js"></script>
-  <script>
-    const presets = [
-      {name:'成都',latitude:30.66,longitude:104.07},{name:'北京',latitude:39.90,longitude:116.41},
-      {name:'上海',latitude:31.23,longitude:121.47},{name:'杭州',latitude:30.27,longitude:120.15},
-      {name:'深圳',latitude:22.54,longitude:114.06},{name:'拉萨',latitude:29.65,longitude:91.14}
-    ];
-    const input = document.getElementById('cityInput');
-    const suggestions = document.getElementById('suggestions');
-    const status = document.getElementById('status');
-    const days = document.getElementById('days');
-    let selected = presets[0];
-    let requestSerial = 0;
-    let searchTimer;
-    let searchSerial = 0;
-    let lastRefreshAt = 0;
-
-    function cnTime(value) { return new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(value)); }
-    function cnDate(value) { return new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',month:'long',day:'numeric',weekday:'short'}).format(new Date(value+'T12:00:00+08:00')); }
-    function line(parent, tag, className, value) { const el=document.createElement(tag); if(className) el.className=className; el.textContent=value; parent.appendChild(el); return el; }
-    function eventNode(label, item) {
-      const outer=document.createElement('div'); outer.className='event';
-      const top=line(outer,'div','event-top','');
-      const left=line(top,'div','','');
-      line(left,'div','event-name',label); line(left,'div','event-time',cnTime(item.time));
-      if(new Date(item.time).getTime()<Date.now()) {
-        const passed=line(top,'div','score low','—'); line(passed,'small','',' 已过');
-        line(outer,'p','reason','这个时段已经过去；所示预报不代表实际观测。');
-        return outer;
-      }
-      const score=line(top,'div','score'+(item.score<40?' low':item.score>=70?' good':''),String(item.score));
-      line(score,'small','', ' / 100');
-      const meter=line(outer,'div','meter',''); const fill=line(meter,'b','',''); fill.style.width=item.score+'%';
-      line(outer,'div','grade',item.grade+' · 观赏指数'); line(outer,'p','reason',item.reason);
-      return outer;
-    }
-    function render(data) {
-      document.getElementById('locationTitle').textContent=data.location.name+' · 霞光预报';
-      const updated=new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(data.updated_at));
-      document.getElementById('updatedAt').textContent='获取时间 '+updated+(data.cached?' · 已缓存':'');
-      status.textContent=data.stale?'当前数据源暂不可用，显示上次缓存的预报。':'';
-      days.replaceChildren();
-      data.days.forEach((day,index)=>{
-        const card=line(days,'article','day',''); const head=line(card,'h3','',index===0?'今天':index===1?'明天':'后天');
-        line(head,'span','date-sub',cnDate(day.date));
-        card.appendChild(eventNode('朝霞 · 日出',day.sunrise));
-        card.appendChild(eventNode('晚霞 · 日落',day.sunset));
-      });
-    }
-    async function load(city, force=false) {
-      selected=city;
-      if(!force) { ++searchSerial; clearTimeout(searchTimer); suggestions.replaceChildren(); input.value=city.name; }
-      const serial=++requestSerial;
-      status.textContent='正在获取 '+city.name+' 的预报…';
-      if(!force) days.replaceChildren();
-      try {
-        const data=await forecastDirect(city, force);
-        if(serial!==requestSerial) return;
-        render(data); lastRefreshAt=Date.now();
-      } catch(error) { if(serial===requestSerial) { status.textContent=error.message; lastRefreshAt=Date.now(); if(!days.children.length) document.getElementById('updatedAt').textContent='暂未取得有效预报'; } }
-    }
-    async function search() {
-      clearTimeout(searchTimer);
-      const serial=++searchSerial;
-      const q=input.value.trim(); suggestions.replaceChildren();
-      if(q.length<2) { if(q) status.textContent='请至少输入两个字搜索城市。'; return; }
-      try {
-        const data=await citiesDirect(q);
-        if(serial!==searchSerial || q!==input.value.trim()) return;
-        suggestions.replaceChildren();
-        if(!data.cities.length) { status.textContent='没有找到该城市，可以试试完整地名。'; return; }
-        status.textContent='';
-        data.cities.forEach(city=>{
-          const button=document.createElement('button'); button.type='button'; button.setAttribute('role','option');
-          line(button,'span','',city.name); line(button,'small','',city.admin1 || '中国地区');
-          button.addEventListener('click',()=>load(city)); suggestions.appendChild(button);
-        });
-      } catch(error) { if(serial===searchSerial && q===input.value.trim()) status.textContent=error.message; }
-    }
-    document.getElementById('searchButton').addEventListener('click',search);
-    input.addEventListener('input',()=>{ clearTimeout(searchTimer); if(!input.value.trim()) { suggestions.replaceChildren(); return; } searchTimer=setTimeout(search,350); });
-    input.addEventListener('keydown',event=>{ if(event.key==='Enter') { clearTimeout(searchTimer); search(); } if(event.key==='Escape') suggestions.replaceChildren(); });
-    document.addEventListener('click',event=>{ if(!event.target.closest('.searchbox')) suggestions.replaceChildren(); });
-    presets.forEach(city=>{ const button=document.createElement('button'); button.type='button'; button.textContent=city.name; button.addEventListener('click',()=>load(city)); document.getElementById('quick').appendChild(button); });
-    setInterval(()=>{ if(!document.hidden) load(selected,true); },5*60*1000);
-    document.addEventListener('visibilitychange',()=>{ if(!document.hidden && Date.now()-lastRefreshAt>=5*60*1000) load(selected,true); });
-    load(selected);
-  </script>
+  <script src="app.js"></script>
+  <script src="community.js"></script>
 </body>
 </html>

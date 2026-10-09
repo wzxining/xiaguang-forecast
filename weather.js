@@ -102,7 +102,10 @@
 
   async function citiesDirect(q) {
     if (q.length < 2 || q.length > 60) throw new Error('请输入 2 至 60 个字搜索城市。');
-    const local = popular.filter(city => city.name.includes(q));
+    const term=q.replace(/市$/, '');
+    const all=[...popular,...(scope.CITY_INDEX || [])];
+    const seen=new Set();
+    const local=all.filter(city=> { const key=city.name.replace(/市$/, ''); if(seen.has(key)) return false; seen.add(key); return key.includes(term); }).sort((a,b)=>Number(b.name===term)-Number(a.name===term));
     if (local.length) return { cities: local.slice(0, 8) };
     try {
       const query = new URLSearchParams({ name: q, count: 8, language: 'zh', format: 'json' });
