@@ -25,7 +25,7 @@ function placeCard(parent,spot,city,preview=false){
  line(c,'p','coordinate',coordinatesText(spot));
  if(preview){const summary=line(c,'div','spot-summary','');summary.setAttribute('aria-live','polite');summary.dataset.spotId=spot.id;fillSpotForecast(summary,spot);}
  const view=button(c,selectedSpot?.id===spot.id?'正在查看 · 三天详情':'查看此景点三天预报',()=>selectSpot(spot,city),'soft forecast-link');
- view.dataset.selectSpot=spot.id;view.disabled=!hasCoordinates(spot);
+ view.dataset.selectSpot=spot.id;view.disabled=!hasCoordinates(spot);if(view.disabled)view.textContent='坐标待核实 · 暂不能预报';
  const actions=line(c,'div','actions','');const saved=readShelf().spots.some(x=>x.id===spot.id);const b=button(actions,saved?'★ 已收藏':'☆ 收藏景点',()=>favoriteSpot(spot,city));b.setAttribute('aria-pressed',String(saved));external(actions,'地图 ↗',spot.map||mapLink(city.name+' '+spot.name));
  if(spot.source)external(c,spot.verified?'查看观赏资料 ↗':'查看 OpenStreetMap 记录 ↗',spot.source,'place-source');
  if(spot.coordinateSource&&spot.coordinateSource!==spot.source)external(c,'查看坐标参考位置 ↗',spot.coordinateSource,'place-source');
@@ -34,7 +34,7 @@ function placeCard(parent,spot,city,preview=false){
 async function fillSpotForecast(container,spot,force=false){
  const run=String(Number(container.dataset.run||0)+1);container.dataset.run=run;
  if(!hasCoordinates(spot)){container.textContent='坐标待核实，暂不提供该景点预报。';return;}
- if(!force||!container.children.length)container.textContent='正在查询这个景点的天气…';
+ if(!force||!container.children.length)container.textContent='正在查询景点天气，连接不稳时会自动重试…';
  try{
   const data=await forecastDirect(spot,force);
   if(container.dataset.run!==run||!container.isConnected)return;

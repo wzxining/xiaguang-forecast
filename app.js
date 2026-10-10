@@ -38,7 +38,7 @@ function render(data) {
   document.getElementById('pointMeta').textContent=coordinatesText(selectedSpot)+'（WGS84）';
   const g=data.grid;
   document.getElementById('gridMeta').textContent=g&&Number.isFinite(g.latitude)&&Number.isFinite(g.longitude)?'气象网格参考位置：'+g.latitude.toFixed(3)+'°N, '+g.longitude.toFixed(3)+'°E。附近景点可能落在同一网格，预报相同属于正常情况。':'';
-  status.textContent=data.stale?'当前数据源暂不可用，显示该景点上次缓存的预报。':'';
+  status.textContent=data.stale?'最新查询未成功，暂用该景点上次保存的预报。'+(data.warning||''):'';
   days.replaceChildren();
   data.days.forEach((day,index)=>{
     const card=line(days,'article','day',''), head=line(card,'h3','',index===0?'今天':index===1?'明天':'后天');
@@ -54,7 +54,8 @@ async function fetchSelected(force=false) {
     document.getElementById('updatedAt').textContent='';document.getElementById('pointMeta').textContent='';document.getElementById('gridMeta').textContent='';
     status.textContent=spot?'这个景点的坐标尚待核实，暂不提供预报。':'暂未收录这个城市的景点坐标。可在下方查找附近地图候选点。';return;
   }
-  status.textContent='正在获取 '+spot.name+' 的预报…';
+  status.textContent='正在获取 '+spot.name+' 的预报，连接不稳时会自动重试一次…';
+  if(force)document.getElementById('updatedAt').textContent=days.children.length?'正在更新，暂保留上次预报…':'正在重试气象查询…';
   if(!force){days.replaceChildren();document.getElementById('locationTitle').textContent=selected.name+' · '+spot.name;document.getElementById('updatedAt').textContent='正在获取景点预报…';document.getElementById('pointMeta').textContent=coordinatesText(spot)+'（WGS84）';document.getElementById('gridMeta').textContent='';}
   try {const data=await forecastDirect(spot,force);if(serial!==requestSerial)return;render(data);}
   catch(error){if(serial===requestSerial){status.textContent=error.message;if(!days.children.length)document.getElementById('updatedAt').textContent='暂未取得有效预报';}}
@@ -65,6 +66,7 @@ function load(city, force=false, preferredSpot=null) {
   if(force){refreshForecasts();return;}
   selected=city; selectedSpot=preferredSpot?resolveSpot(preferredSpot):spotsForCity(city).find(hasCoordinates)||null;
   closeSuggestions();input.value='';input.placeholder='搜索城市或景点 · 当前'+city.name;
+  setForecastScope([...spotsForCity(city),selectedSpot].filter(hasCoordinates));
   window.dispatchEvent(new CustomEvent('citychange',{detail:city}));
   fetchSelected();
 }
