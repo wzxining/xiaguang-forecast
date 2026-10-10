@@ -1,4 +1,4 @@
-// Short original summaries of publicly documented viewing places; sources checked 2026-10-09.
+// Short original summaries of publicly documented viewing places; sources checked through 2026-10-10.
 // Labels describe reported viewing times, not a guarantee of access or weather.
 window.VIEWING_SPOTS = (() => {
  const rows=[];
@@ -61,5 +61,16 @@ window.VIEWING_SPOTS = (() => {
  ['大帽山观景台','朝霞','登山线路上的开阔观景台，资料记录可看日出；需留意山上强风与步行条件。']]);
  add('台中','https://www.taiwan.net.tw/m1.aspx?id=r117&sNo=0001016',[
  ['高美湿地海堤','晚霞','湿地、海面与夕阳构成开阔景观，请遵守潮汐、步道和生态保护规定。']]);
+ // Additional public viewing reports checked 2026-10-10. Approximate points are labelled.
+ add('杭州','https://glowsunset.cn/blog/hangzhou-sunset-spots',[
+ ['城市阳台','晚霞 · 游记推荐','钱塘江边的开阔平台，可把江面与城市天际线纳入晚霞画面；日落方位随季节变化。']]);
+ add('杭州','https://travel.hangzhou.com.cn/content/2024-08/28/content_8779442.html',[
+ ['宝石山蛤蟆峰','朝霞','杭州网记录的日出观赏地点，可俯瞰西湖与城区；只在允许通行的区域停留。'],
+ ['马家坞纳福云台','朝霞','山顶观景栈道可远眺西湖、西溪与城市晨光，需预留步行上山时间。'],
+ ['北高峰山顶','朝霞','山顶可观察城市晨光。登山步道与寺院开放情况分别确认，预留上下山时间。']]);
+ add('上海','https://www.shanghai.gov.cn/nw17239/20260807/2431f386554d4e60866eb7ba4fa8eb70.html',[
+ ['宝山滨江公园','晚霞','沿开放江岸看夕照与日落后的蓝调天空，适合把江面、远船和灯光一起取景。']]);
+ add('南京','https://www.zgjssw.gov.cn/shixianchuanzhen/nanjing/202510/t20251020_8530429.shtml',[
+ ['鱼嘴湿地公园','晚霞','长江边的日落观赏地，可沿开放江堤寻找灯塔和江面的构图。']]);
  return rows.map(spot=>({...spot,...(window.SPOT_COORDINATES||{})[spot.id]}));
 })();

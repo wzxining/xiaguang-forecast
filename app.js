@@ -15,49 +15,45 @@ function coordinatesText(spot){return hasCoordinates(spot)?spot.latitude.toFixed
     function cnTime(value) { return new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(value)); }
     function cnDate(value) { return new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',month:'long',day:'numeric',weekday:'short'}).format(new Date(value+'T12:00:00+08:00')); }
     function line(parent, tag, className, value) { const el=document.createElement(tag); if(className) el.className=className; el.textContent=value; parent.appendChild(el); return el; }
-    function eventNode(label, item) {
-      const outer=document.createElement('div'); outer.className='event';
-      const top=line(outer,'div','event-top','');
-      const left=line(top,'div','','');
-      line(left,'div','event-name',label); line(left,'div','event-time',cnTime(item.time));
-      if(new Date(item.time).getTime()<Date.now()) {
-        const passed=line(top,'div','score low','—'); line(passed,'small','',' 已过');
-        line(outer,'p','reason','这个时段已经过去；所示预报不代表实际观测。');
-        return outer;
-      }
-      const score=line(top,'div','score'+(item.score<40?' low':item.score>=70?' good':''),String(item.score));
-      line(score,'small','', ' / 100');
-      const meter=line(outer,'div','meter',''); const fill=line(meter,'b','',''); fill.style.width=item.score+'%';
-      line(outer,'div','grade',item.grade+' · 观赏指数'); line(outer,'p','reason',item.reason);
-      return outer;
-    }
-function render(data) {
-  document.getElementById('locationTitle').textContent=selected.name+' · '+selectedSpot.name;
-  const updated=new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(data.updated_at));
-  document.getElementById('updatedAt').textContent='获取时间 '+updated+(data.cached?' · 已缓存':'')+' · 每 5 分钟更新';
-  document.getElementById('pointMeta').textContent=coordinatesText(selectedSpot)+'（WGS84）';
-  const g=data.grid;
-  document.getElementById('gridMeta').textContent=g&&Number.isFinite(g.latitude)&&Number.isFinite(g.longitude)?'气象网格参考位置：'+g.latitude.toFixed(3)+'°N, '+g.longitude.toFixed(3)+'°E。附近景点可能落在同一网格，预报相同属于正常情况。':'';
-  status.textContent=data.stale?'最新查询未成功，暂用该景点上次保存的预报。'+(data.warning||''):'';
-  days.replaceChildren();
+function eventNode(label, item, key) {
+  const outer=document.createElement('div');outer.className='event '+(key==='sunrise'?'dawn':'dusk');
+  const passed=new Date(item.time).getTime()<Date.now();outer.classList.toggle('past-event',passed);
+  const top=line(outer,'div','event-top',''), left=line(top,'div','','');
+  line(left,'div','event-name',label);line(left,'div','event-time',cnTime(item.time));
+  const score=line(top,'div','score',String(item.score));line(score,'small','',' / 100');
+  const meter=line(outer,'div','meter','');meter.setAttribute('role','meter');meter.setAttribute('aria-label',label+'观赏指数');
+  meter.setAttribute('aria-valuemin','0');meter.setAttribute('aria-valuemax','100');meter.setAttribute('aria-valuenow',String(item.score));
+  line(meter,'b','','').style.width=item.score+'%';
+  line(outer,'div','grade',item.grade+(passed?' · 已过时段的预报值':' · 观赏指数'));
+  line(outer,'p','reason',item.reason);
+  return outer;
+}
+function renderForecastDays(parent,data,compact=false){
+  parent.replaceChildren();
   data.days.forEach((day,index)=>{
-    const card=line(days,'article','day',''), head=line(card,'h3','',index===0?'今天':index===1?'明天':'后天');
+    const card=line(parent,'article','day'+(compact?' compact-day':''),''),head=line(card,compact?'h4':'h3','',index===0?'今天':index===1?'明天':'后天');
     line(head,'span','date-sub',cnDate(day.date));
-    card.appendChild(eventNode('朝霞 · 日出',day.sunrise));card.appendChild(eventNode('晚霞 · 日落',day.sunset));
+    const events=line(card,'div','day-events','');
+    events.appendChild(eventNode('朝霞 · 日出',day.sunrise,'sunrise'));events.appendChild(eventNode('晚霞 · 日落',day.sunset,'sunset'));
+    const details=line(card,'details','weather-details','');line(details,'summary','','查看云量与能见度');
+    for(const [key,label] of [['sunrise','朝霞'],['sunset','晚霞']]){const e=day[key];line(details,'p','',label+'：低云 '+e.cloud_low+'% · 中云 '+e.cloud_mid+'% · 高云 '+e.cloud_high+'% · 降水可能 '+e.rain_probability+'% · 能见度 '+(e.visibility_m===null?'暂无':(e.visibility_m/1000).toFixed(1)+' km'));}
   });
 }
+function render(data) {
+  document.getElementById('locationTitle').textContent=selected.name+' · 城市整体参考';
+  const updated=new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(data.updated_at));
+  document.getElementById('updatedAt').textContent='获取时间 '+updated+(data.cached?' · 已缓存':'')+' · 每 5 分钟更新';
+  document.getElementById('pointMeta').textContent='按市区参考坐标查询（'+selected.latitude.toFixed(3)+'°N, '+selected.longitude.toFixed(3)+'°E），作为城市概况；各景点以上方独立预报为准。';
+  document.getElementById('gridMeta').textContent='已过时段保留的是预报值，不代表实际观测结果。';
+  status.textContent=data.stale?'最新查询未成功，暂用该城市上次保存的预报。'+(data.warning||''):'';
+  renderForecastDays(days,data);
+}
 async function fetchSelected(force=false) {
-  const spot=selectedSpot, serial=++requestSerial;
-  if(!hasCoordinates(spot)) {
-    days.replaceChildren();
-    document.getElementById('locationTitle').textContent=selected.name+' · 请选择景点';
-    document.getElementById('updatedAt').textContent='';document.getElementById('pointMeta').textContent='';document.getElementById('gridMeta').textContent='';
-    status.textContent=spot?'这个景点的坐标尚待核实，暂不提供预报。':'暂未收录这个城市的景点坐标。可在下方查找附近地图候选点。';return;
-  }
-  status.textContent='正在获取 '+spot.name+' 的预报，连接不稳时会自动重试一次…';
+  const city=selected,serial=++requestSerial;
+  status.textContent='正在获取 '+city.name+' 的市区参考预报…';
   if(force)document.getElementById('updatedAt').textContent=days.children.length?'正在更新，暂保留上次预报…':'正在重试气象查询…';
-  if(!force){days.replaceChildren();document.getElementById('locationTitle').textContent=selected.name+' · '+spot.name;document.getElementById('updatedAt').textContent='正在获取景点预报…';document.getElementById('pointMeta').textContent=coordinatesText(spot)+'（WGS84）';document.getElementById('gridMeta').textContent='';}
-  try {const data=await forecastDirect(spot,force);if(serial!==requestSerial)return;render(data);}
+  if(!force){days.replaceChildren();document.getElementById('locationTitle').textContent=city.name+' · 城市整体参考';document.getElementById('updatedAt').textContent='正在获取城市预报…';document.getElementById('pointMeta').textContent='';document.getElementById('gridMeta').textContent='';}
+  try{const data=await forecastDirect(city,force);if(serial!==requestSerial)return;render(data);}
   catch(error){if(serial===requestSerial){status.textContent=error.message;if(!days.children.length)document.getElementById('updatedAt').textContent='暂未取得有效预报';}}
   finally{if(serial===requestSerial)lastRefreshAt=Date.now();}
 }
@@ -66,16 +62,13 @@ function load(city, force=false, preferredSpot=null) {
   if(force){refreshForecasts();return;}
   selected=city; selectedSpot=preferredSpot?resolveSpot(preferredSpot):spotsForCity(city).find(hasCoordinates)||null;
   closeSuggestions();input.value='';input.placeholder='搜索城市或景点 · 当前'+city.name;
-  setForecastScope([...spotsForCity(city),selectedSpot].filter(hasCoordinates));
+  setForecastScope([city,...spotsForCity(city),selectedSpot].filter(hasCoordinates));
   window.dispatchEvent(new CustomEvent('citychange',{detail:city}));
   fetchSelected();
 }
 function selectSpot(spot,city=selected,scroll=true){
-  spot=resolveSpot(spot);
-  if(cityName(city.name)!==cityName(selected.name))load(city,false,spot);
-  else{selectedSpot=spot;closeSuggestions();input.value='';fetchSelected();window.dispatchEvent(new CustomEvent('spotchange'));}
-  location.hash='home';
-  if(scroll)document.getElementById('forecastSection').scrollIntoView({behavior:'smooth',block:'start'});
+  spot=resolveSpot(spot);load(city,false,spot);location.hash='home';
+  if(scroll){const card=[...document.querySelectorAll('#places .place')].find(c=>c.dataset.spotId===spot.id);(card||document.getElementById('placesSection')).scrollIntoView({behavior:'smooth',block:'start'});}
 }
 function refreshForecasts(){fetchSelected(true);window.dispatchEvent(new CustomEvent('forecastrefresh'));}
 function searchHeading(text){line(suggestions,'div','search-heading',text).setAttribute('role','presentation');}

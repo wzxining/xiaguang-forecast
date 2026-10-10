@@ -6,7 +6,7 @@
   <meta name="giscus:backlink" content="https://wzxining.github.io/xiaguang-forecast/">
   <meta name="theme-color" content="#101725">
   <title>霞光观测站 · 朝霞晚霞观赏指数</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=20261010-charts44">
 </head>
 <body>
   <div class="wrap">
@@ -25,20 +25,21 @@
         </div>
         <div class="illustration" role="img" aria-label="夕阳照亮云层和山脊的插画"><div class="cloud one"></div><div class="cloud two"></div><div class="ridge"></div><div class="photo-caption"><span>日落之后，云仍可能被照亮</span><span>°</span></div></div>
       </section>
-      <section id="forecastSection" aria-live="polite">
-        <div class="section-head"><div><div class="eyebrow">THE FORECAST</div><h2 id="locationTitle">成都 · 霞光预报</h2><button id="saveCity" class="soft small" type="button">☆ 收藏城市</button></div><div id="updatedAt" class="section-meta">正在获取最新预报…</div></div>
-        <p id="pointMeta" class="fine"></p><div class="forecast-tools"><a href="#placesSection">查看本市各景点预报 ↓</a><button id="refreshForecasts" class="soft small" type="button">更新预报</button></div>
-        <div id="status" class="status"></div>
-        <div id="days" class="days"></div>
-        <p id="gridMeta" class="fine"></p><div class="explain"><strong>这个指数怎样计算？</strong> 它综合日出、日落前后的低云、中高云、降水可能性和能见度，属于实验性观赏参考。数值越高表示模型给出的观赏条件越好，<strong>不代表出现霞光的概率，也不保证实际景象</strong>。山地、局地云雾和远方云层会带来偏差。</div>
-      </section>
       <section id="placesSection" aria-labelledby="placesTitle">
-        <div class="section-head"><div><div class="eyebrow">FIND YOUR VIEW</div><h2 id="placesTitle">成都 · 去哪里等霞光</h2></div><div class="section-meta">把喜欢的地点，留给下一次出发</div></div>
+        <div class="section-head"><div><div class="eyebrow">FIND YOUR VIEW</div><h2 id="placesTitle">成都 · 去哪里等霞光</h2></div><div class="section-meta"><span class="chart-key"><i class="dawn-dot"></i>朝霞 <i class="dusk-dot"></i>晚霞 · 指数 0–100</span></div></div>
         <p id="placesNote" class="muted" aria-live="polite"></p>
         <div id="places" class="place-grid"></div>
         <div class="actions"><button id="morePlaces" class="soft" type="button">查找附近更多候选点</button><a id="mapCity" target="_blank" rel="noopener">在地图中找景点 ↗</a></div>
         <p class="fine">资料中有日出或日落记录的地点会标明时段；地图候选点尚未核实视野。景点按各自坐标查询，但气象网格有精度限制，临近地点可能预报相同。标注“景区参考点”的位置尚未细化到具体机位。出发前请查看开放、预约和交通信息。</p>
       </section>
+      <section id="forecastSection" aria-live="polite">
+        <div class="section-head"><div><div class="eyebrow">CITY OVERVIEW</div><h2 id="locationTitle">成都 · 城市整体参考</h2><button id="saveCity" class="soft small" type="button">☆ 收藏城市</button></div><div id="updatedAt" class="section-meta">正在获取最新预报…</div></div>
+        <p id="pointMeta" class="fine"></p><div class="forecast-tools"><a href="#placesSection">返回景点预报 ↑</a><button id="refreshForecasts" class="soft small" type="button">更新预报</button></div>
+        <div id="status" class="status"></div>
+        <div id="days" class="days"></div>
+        <p id="gridMeta" class="fine"></p><div class="explain"><strong>这个指数怎样计算？</strong> 它综合日出、日落前后的低云、中高云、降水可能性和能见度，属于实验性观赏参考。数值越高表示模型给出的观赏条件越好，<strong>不代表出现霞光的概率，也不保证实际景象</strong>。山地、局地云雾和远方云层会带来偏差。</div>
+      </section>
+
     </div>
     <section id="mePage" hidden>
       <div class="eyebrow">MY LIGHT JOURNAL</div><h1 class="profile-title">我的观霞</h1>
@@ -59,11 +60,11 @@
     </main>
     <footer><span>霞光观测站 · 中国标准时间 UTC+8</span><span>气象数据：<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>；城市索引：<a href="https://github.com/88250/city-geo" target="_blank" rel="noopener">City Geo</a>（木兰宽松许可证第2版）；在线搜索：<a href="https://www.geonames.org/" target="_blank" rel="noopener">GeoNames</a>；景点坐标与候选地点：<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a>（ODbL）。</span></footer>
   </div>
-  <script src="cities.js"></script>
-  <script src="spot-coordinates.js"></script>
-  <script src="spots.js"></script>
-  <script src="weather.js"></script>
-  <script src="app.js"></script>
-  <script src="community.js"></script>
+  <script src="cities.js?v=20261010-charts44"></script>
+  <script src="spot-coordinates.js?v=20261010-charts44"></script>
+  <script src="spots.js?v=20261010-charts44"></script>
+  <script src="weather.js?v=20261010-charts44"></script>
+  <script src="app.js?v=20261010-charts44"></script>
+  <script src="community.js?v=20261010-charts44"></script>
 </body>
 </html>

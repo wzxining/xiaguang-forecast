@@ -1,4 +1,4 @@
-// WGS84 reference points checked against linked map features.
+// WGS84 reference points; approximate published points are labelled.
 // Map data © OpenStreetMap contributors, ODbL. No runtime geocoding.
 window.SPOT_COORDINATES = {
   "上海:外滩观景平台": {
@@ -265,6 +265,51 @@ window.SPOT_COORDINATES = {
     "longitude": 109.4900517,
     "coordinateSource": "https://www.openstreetmap.org/node/2050879681",
     "coordinateLabel": "景区参考点：椰梦长廊海月广场段",
+    "coordinateChecked": "2026-10-10"
+  },
+  "杭州:城市阳台": {
+    "latitude": 30.2442,
+    "longitude": 120.2125,
+    "coordinateSource": "https://glowsunset.cn/blog/hangzhou-sunset-spots",
+    "coordinateLabel": "公开资料提供的近似参考点：城市阳台",
+    "coordinateChecked": "2026-10-10",
+    "coordinatePrecision": "approximate"
+  },
+  "杭州:宝石山蛤蟆峰": {
+    "latitude": 30.2622,
+    "longitude": 120.1435,
+    "coordinateSource": "https://glowsunset.cn/blog/hangzhou-sunset-spots",
+    "coordinateLabel": "公开资料提供的近似参考点：宝石山蛤蟆峰",
+    "coordinateChecked": "2026-10-10",
+    "coordinatePrecision": "approximate"
+  },
+  "杭州:马家坞纳福云台": {
+    "latitude": 30.2553,
+    "longitude": 120.0995,
+    "coordinateSource": "https://glowsunset.cn/blog/hangzhou-sunset-spots",
+    "coordinateLabel": "公开资料提供的近似参考点：马家坞纳福云台",
+    "coordinateChecked": "2026-10-10",
+    "coordinatePrecision": "approximate"
+  },
+  "杭州:北高峰山顶": {
+    "latitude": 30.247758055555558,
+    "longitude": 120.09341388888889,
+    "coordinateSource": "https://commons.wikimedia.org/wiki/File:Entrance_of_the_Lingshun_Temple.jpg",
+    "coordinateLabel": "景区参考点：山顶灵顺寺前摄影位置",
+    "coordinateChecked": "2026-10-10"
+  },
+  "上海:宝山滨江公园": {
+    "latitude": 31.41351,
+    "longitude": 121.49142,
+    "coordinateSource": "https://mapcarta.com/W202630126",
+    "coordinateLabel": "景区参考点：宝山滨江公园地图范围",
+    "coordinateChecked": "2026-10-10"
+  },
+  "南京:鱼嘴湿地公园": {
+    "latitude": 31.97949,
+    "longitude": 118.67014,
+    "coordinateSource": "https://mapcarta.com/W883813030",
+    "coordinateLabel": "景区参考点：鱼嘴湿地公园地图范围",
     "coordinateChecked": "2026-10-10"
   }
 };

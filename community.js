@@ -22,43 +22,39 @@ function placeCard(parent,spot,city,preview=false){
  const c=line(parent,'article','place','');c.dataset.spotId=spot.id;
  c.classList.toggle('selected-place',selectedSpot?.id===spot.id);
  line(c,'span','tag',spot.kind||'地图候选');line(c,'h3','',spot.name);line(c,'p','',spot.note||'尚未核实日落方向、遮挡与开放情况。');
- line(c,'p','coordinate',coordinatesText(spot));
+ if(spot.coordinatePrecision==='approximate')line(c,'small','coordinate-hint','按近似参考坐标预报 · 具体机位见地图');
  if(preview){const summary=line(c,'div','spot-summary','');summary.setAttribute('aria-live','polite');summary.dataset.spotId=spot.id;fillSpotForecast(summary,spot);}
- const view=button(c,selectedSpot?.id===spot.id?'正在查看 · 三天详情':'查看此景点三天预报',()=>selectSpot(spot,city),'soft forecast-link');
- view.dataset.selectSpot=spot.id;view.disabled=!hasCoordinates(spot);if(view.disabled)view.textContent='坐标待核实 · 暂不能预报';
+ else {const view=button(c,'查看此景点三天预报',()=>selectSpot(spot,city),'soft forecast-link');view.disabled=!hasCoordinates(spot);if(view.disabled)view.textContent='坐标待核实 · 暂不能预报';}
  const actions=line(c,'div','actions','');const saved=readShelf().spots.some(x=>x.id===spot.id);const b=button(actions,saved?'★ 已收藏':'☆ 收藏景点',()=>favoriteSpot(spot,city));b.setAttribute('aria-pressed',String(saved));external(actions,'地图 ↗',spot.map||mapLink(city.name+' '+spot.name));
- if(spot.source)external(c,spot.verified?'查看观赏资料 ↗':'查看 OpenStreetMap 记录 ↗',spot.source,'place-source');
- if(spot.coordinateSource&&spot.coordinateSource!==spot.source)external(c,'查看坐标参考位置 ↗',spot.coordinateSource,'place-source');
+ const info=line(c,'details','place-info','');line(info,'summary','','观赏资料与坐标');line(info,'p','coordinate',coordinatesText(spot)+'（WGS84）');
+ if(spot.source)external(info,spot.verified?'查看观赏资料 ↗':'查看 OpenStreetMap 记录 ↗',spot.source,'place-source');
+ if(spot.coordinateSource&&spot.coordinateSource!==spot.source)external(info,'查看坐标参考位置 ↗',spot.coordinateSource,'place-source');
  return c;
 }
 async function fillSpotForecast(container,spot,force=false){
- const run=String(Number(container.dataset.run||0)+1);container.dataset.run=run;
- if(!hasCoordinates(spot)){container.textContent='坐标待核实，暂不提供该景点预报。';return;}
+ const run=String(Number(container.dataset.run||0)+1);container.dataset.run=run;container.dataset.state='loading';
+ if(!hasCoordinates(spot)){container.textContent='坐标待核实，暂不提供该景点预报。';container.dataset.state='error';return;}
  if(!force||!container.children.length)container.textContent='正在查询景点天气，连接不稳时会自动重试…';
  try{
   const data=await forecastDirect(spot,force);
   if(container.dataset.run!==run||!container.isConnected)return;
-  container.replaceChildren();
-  const row=line(container,'div','spot-events','');
-  for(const [key,label] of [['sunrise','朝霞'],['sunset','晚霞']]){
-   const day=data.days.find(d=>new Date(d[key].time).getTime()>Date.now());
-   const cell=line(row,'div','spot-event','');line(cell,'span','',label);
-   if(day){const item=day[key];line(cell,'strong','',item.score+' 分');line(cell,'small','',day.date.slice(5)+' '+cnTime(item.time));line(cell,'small','',item.grade);}
-   else line(cell,'small','','暂无未来时段');
-  }
-  line(container,'small','spot-updated',(data.stale?'暂用该景点上次缓存 · ':'')+'获取于 '+cnTime(data.updated_at));
- }catch(error){if(container.dataset.run===run&&container.isConnected){container.replaceChildren();line(container,'p','',error.message);button(container,'重试此景点',()=>fillSpotForecast(container,spot,true));}}
+  container.replaceChildren();container.dataset.state=data.stale?'stale':'ok';
+  const chart=line(container,'div','spot-days','');renderForecastDays(chart,data,true);
+  line(container,'small','spot-updated',(data.stale?'暂用上次缓存 · ':'')+'获取于 '+new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(data.updated_at))+' · 每 5 分钟更新');
+  if(data.grid&&Number.isFinite(data.grid.latitude)&&Number.isFinite(data.grid.longitude)){const grid=line(container,'details','weather-details','');line(grid,'summary','','天气网格说明');line(grid,'p','','天气网格参考位置 '+data.grid.latitude.toFixed(3)+'°N, '+data.grid.longitude.toFixed(3)+'°E。相邻地点可能共用网格，预报相同不代表查询失败。');}
+  if(data.stale)line(container,'p','cache-warning',data.warning||'新数据暂不可用。');
+ }catch(error){if(container.dataset.run===run&&container.isConnected){container.replaceChildren();container.dataset.state='error';line(container,'p','',error.message);button(container,'重试此景点',()=>fillSpotForecast(container,spot,true));}}
 }
 function mapLink(name){return 'https://www.amap.com/search?query='+encodeURIComponent(name);}
 function renderPlaces(items,city){$('places').replaceChildren();items.forEach(s=>placeCard($('places'),s,city,true));if(!items.length)line($('places'),'div','empty','这个城市的景点名录仍在补充，可尝试查找附近地图候选点。');}
-function showPlaces(city){++placeSerial;mapRequest?.abort();visiblePlaces=spotsForCity(city);if(selectedSpot&&!visiblePlaces.some(s=>s.id===selectedSpot.id))visiblePlaces=[selectedSpot,...visiblePlaces];$('placesTitle').textContent=city.name+' · 各景点霞光预报';$('mapCity').href=mapLink(city.name+' 观景台 公园');$('morePlaces').disabled=false;$('morePlaces').textContent='查找附近更多候选点';renderPlaces(visiblePlaces,city);renderCityButton();$('placesNote').textContent=visiblePlaces.length?'本站已收录 '+visiblePlaces.length+' 处地点。下方分别按景点坐标显示下一次朝霞和晚霞预报；点击可查看三天详情。':'暂未收录该城市的景点，可手动查找附近地点。';}
+function showPlaces(city){++placeSerial;mapRequest?.abort();visiblePlaces=spotsForCity(city);if(selectedSpot&&!visiblePlaces.some(s=>s.id===selectedSpot.id))visiblePlaces=[selectedSpot,...visiblePlaces];$('placesTitle').textContent=city.name+' · 各景点霞光预报';$('mapCity').href=mapLink(city.name+' 观景台 公园');$('morePlaces').disabled=false;$('morePlaces').textContent='查找附近更多候选点';renderPlaces(visiblePlaces,city);renderCityButton();$('placesNote').textContent=visiblePlaces.length?'本站已收录 '+visiblePlaces.length+' 处地点。每处独立显示三天朝霞、晚霞与日出日落时间。双色条越长，观赏指数越高。':'暂未收录该城市的景点，可手动查找附近地点。';}
 window.addEventListener('spotchange',()=>{document.querySelectorAll('.place[data-spot-id]').forEach(c=>{const active=c.dataset.spotId===selectedSpot?.id;c.classList.toggle('selected-place',active);const b=c.querySelector('[data-select-spot]');if(b)b.textContent=active?'正在查看 · 三天详情':'查看此景点三天预报';});});
 window.addEventListener('forecastrefresh',()=>{document.querySelectorAll('#places .spot-summary').forEach(c=>{const spot=visiblePlaces.find(s=>s.id===c.dataset.spotId);if(spot)fillSpotForecast(c,spot,true);});});
 async function loadNearby(city,serial=placeSerial){$('morePlaces').disabled=true;$('morePlaces').textContent='正在查找…';const key='xiaguang:nearby:v1:'+city.latitude+','+city.longitude;let data;
  try{try{const saved=JSON.parse(localStorage.getItem(key)||'null');if(saved&&Date.now()-saved.time<86400000)data=saved.data;}catch{}
  if(!data){const q=`[out:json][timeout:10];(nwr(around:20000,${Number(city.latitude)},${Number(city.longitude)})[tourism=viewpoint][name];nwr(around:12000,${Number(city.latitude)},${Number(city.longitude)})[leisure=park][name];);out center tags 60;`;for(const endpoint of ['https://overpass-api.de/api/interpreter','https://overpass.private.coffee/api/interpreter']){if(serial!==placeSerial)return;const controller=new AbortController();mapRequest=controller;const timer=setTimeout(()=>controller.abort(),12000);try{const r=await fetch(endpoint+'?data='+encodeURIComponent(q),{signal:controller.signal});if(!r.ok)throw Error('unavailable');data=await r.json();if(!Array.isArray(data.elements))throw Error('invalid');break;}catch{data=null;}finally{clearTimeout(timer);}}if(!data)throw Error('unavailable');try{localStorage.setItem(key,JSON.stringify({time:Date.now(),data}));}catch{}}
  if(serial!==placeSerial)return;
- const names=new Set(visiblePlaces.map(s=>s.name));const candidates=(data.elements||[]).filter(e=>e.tags?.name&&e.tags.access!=='private'&&e.tags.access!=='no').sort((a,b)=>Number(b.tags.tourism==='viewpoint')-Number(a.tags.tourism==='viewpoint')).filter(e=>{const n=e.tags['name:zh']||e.tags.name;if(names.has(n))return false;names.add(n);return true;}).map(e=>({latitude:e.lat??e.center?.lat,longitude:e.lon??e.center?.lon,coordinateLabel:e.type==='node'?'地图标注点':'景区地图范围中心',id:'osm:'+e.type+':'+e.id,name:e.tags['name:zh']||e.tags.name,kind:'地图候选 · '+(e.tags.tourism==='viewpoint'?'观景台':'公园'),note:'市中心附近的地图标注点，可能跨行政边界；尚未核实日落视野和开放情况。',source:'https://www.openstreetmap.org/'+e.type+'/'+e.id,verified:false}));visiblePlaces=[...visiblePlaces,...candidates];renderPlaces(visiblePlaces,city);if(!selectedSpot){const first=visiblePlaces.find(hasCoordinates);if(first)selectSpot(first,city,false);}$('placesNote').textContent=candidates.length?'已显示 '+visiblePlaces.length+' 处地点（地图接口最多返回 60 项附近记录）；候选点不代表已验证的朝霞或晚霞机位，也不代表全市完整名录。':'暂未找到更多有名称的候选点，可在地图中继续查找。';
+ const names=new Set(visiblePlaces.map(s=>s.name));const candidates=(data.elements||[]).filter(e=>e.tags?.name&&e.tags.access!=='private'&&e.tags.access!=='no').sort((a,b)=>Number(b.tags.tourism==='viewpoint')-Number(a.tags.tourism==='viewpoint')).filter(e=>{const n=e.tags['name:zh']||e.tags.name;if(names.has(n))return false;names.add(n);return true;}).map(e=>({latitude:e.lat??e.center?.lat,longitude:e.lon??e.center?.lon,coordinateLabel:e.type==='node'?'地图标注点':'景区地图范围中心',id:'osm:'+e.type+':'+e.id,name:e.tags['name:zh']||e.tags.name,kind:'地图候选 · '+(e.tags.tourism==='viewpoint'?'观景台':'公园'),note:'市中心附近的地图标注点，可能跨行政边界；尚未核实日落视野和开放情况。',source:'https://www.openstreetmap.org/'+e.type+'/'+e.id,verified:false}));visiblePlaces=[...visiblePlaces,...candidates];setForecastScope([city,...visiblePlaces].filter(hasCoordinates));renderPlaces(visiblePlaces,city);if(!selectedSpot){selectedSpot=visiblePlaces.find(hasCoordinates)||null;window.dispatchEvent(new CustomEvent('spotchange'));}$('placesNote').textContent=candidates.length?'已显示 '+visiblePlaces.length+' 处地点（地图接口最多返回 60 项附近记录）；候选点不代表已验证的朝霞或晚霞机位，也不代表全市完整名录。':'暂未找到更多有名称的候选点，可在地图中继续查找。';
  }catch{if(serial===placeSerial){$('placesNote').textContent=visiblePlaces.length?'已显示有资料来源的地点；附近地图服务暂不可用。':'这个城市的人工景点资料尚未收录，附近地图服务暂不可用。可打开地图查找，或留言补充你知道的观景点。';}}
  finally{if(serial===placeSerial){$('morePlaces').disabled=false;$('morePlaces').textContent='查找附近更多候选点';}}
 }
