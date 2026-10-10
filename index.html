@@ -17,27 +17,28 @@
         <div>
           <div class="eyebrow">CHASE THE LIGHT</div>
           <h1>下一场霞光，<br>在哪里等你？</h1>
-          <p class="intro">选择城市，查看未来三天的朝霞与晚霞观赏指数、日出日落时间，以及影响观赏的云量和降水条件。</p>
+          <p class="intro">先找城市，再选景点。按每个地点的地图坐标，查看未来三天的朝霞、晚霞与日出日落时间。</p>
           <div class="searchbox">
-            <div class="searchrow"><span aria-hidden="true">⌕</span><input id="cityInput" aria-label="搜索城市" autocomplete="off" placeholder="搜索城市，如成都、杭州"><button id="searchButton" type="button">搜索城市</button></div>
-            <div id="suggestions" class="suggestions" role="listbox"></div>
+            <div class="searchrow"><span aria-hidden="true">⌕</span><input id="cityInput" aria-label="搜索城市或景点" role="combobox" aria-autocomplete="list" aria-controls="suggestions" aria-expanded="false" autocomplete="off" placeholder="搜索城市或景点，如杭州、集贤亭"><button id="searchButton" type="button">找景点</button></div>
+            <div id="suggestions" class="suggestions" role="listbox" aria-label="城市与景点建议"></div>
           </div>
           <div id="quick" class="quick" aria-label="常用城市"></div>
         </div>
         <div class="illustration" role="img" aria-label="夕阳照亮云层和山脊的插画"><div class="cloud one"></div><div class="cloud two"></div><div class="ridge"></div><div class="photo-caption"><span>日落之后，云仍可能被照亮</span><span>°</span></div></div>
       </section>
-      <section aria-live="polite">
+      <section id="forecastSection" aria-live="polite">
         <div class="section-head"><div><div class="eyebrow">THE FORECAST</div><h2 id="locationTitle">成都 · 霞光预报</h2><button id="saveCity" class="soft small" type="button">☆ 收藏城市</button></div><div id="updatedAt" class="section-meta">正在获取最新预报…</div></div>
+        <p id="pointMeta" class="fine"></p><div class="forecast-tools"><a href="#placesSection">查看本市各景点预报 ↓</a><button id="refreshForecasts" class="soft small" type="button">更新预报</button></div>
         <div id="status" class="status"></div>
         <div id="days" class="days"></div>
-        <div class="explain"><strong>这个指数怎样计算？</strong> 它综合日出、日落前后的低云、中高云、降水可能性和能见度，属于实验性观赏参考。数值越高表示模型给出的观赏条件越好，<strong>不代表出现霞光的概率，也不保证实际景象</strong>。山地、局地云雾和远方云层会带来偏差。</div>
+        <p id="gridMeta" class="fine"></p><div class="explain"><strong>这个指数怎样计算？</strong> 它综合日出、日落前后的低云、中高云、降水可能性和能见度，属于实验性观赏参考。数值越高表示模型给出的观赏条件越好，<strong>不代表出现霞光的概率，也不保证实际景象</strong>。山地、局地云雾和远方云层会带来偏差。</div>
       </section>
       <section id="placesSection" aria-labelledby="placesTitle">
         <div class="section-head"><div><div class="eyebrow">FIND YOUR VIEW</div><h2 id="placesTitle">成都 · 去哪里等霞光</h2></div><div class="section-meta">把喜欢的地点，留给下一次出发</div></div>
         <p id="placesNote" class="muted" aria-live="polite"></p>
         <div id="places" class="place-grid"></div>
         <div class="actions"><button id="morePlaces" class="soft" type="button">查找附近更多候选点</button><a id="mapCity" target="_blank" rel="noopener">在地图中找景点 ↗</a></div>
-        <p class="fine">资料中有日出或日落记录的地点会标明时段；地图候选点尚未核实视野。城市预报不等于景点现场天气，出发前请查看开放、预约和交通信息。</p>
+        <p class="fine">资料中有日出或日落记录的地点会标明时段；地图候选点尚未核实视野。景点按各自坐标查询，但气象网格有精度限制，临近地点可能预报相同。标注“景区参考点”的位置尚未细化到具体机位。出发前请查看开放、预约和交通信息。</p>
       </section>
     </div>
     <section id="mePage" hidden>
@@ -57,9 +58,10 @@
     </section>
     <div id="toast" role="status" aria-live="polite"></div>
     </main>
-    <footer><span>霞光观测站 · 中国标准时间 UTC+8</span><span>气象数据：<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>；城市索引：<a href="https://github.com/88250/city-geo" target="_blank" rel="noopener">City Geo</a>（木兰宽松许可证第2版）；在线搜索：<a href="https://www.geonames.org/" target="_blank" rel="noopener">GeoNames</a>；候选地点：<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a>（ODbL）。</span></footer>
+    <footer><span>霞光观测站 · 中国标准时间 UTC+8</span><span>气象数据：<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>；城市索引：<a href="https://github.com/88250/city-geo" target="_blank" rel="noopener">City Geo</a>（木兰宽松许可证第2版）；在线搜索：<a href="https://www.geonames.org/" target="_blank" rel="noopener">GeoNames</a>；景点坐标与候选地点：<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a>（ODbL）。</span></footer>
   </div>
   <script src="cities.js"></script>
+  <script src="spot-coordinates.js"></script>
   <script src="spots.js"></script>
   <script src="weather.js"></script>
   <script src="app.js"></script>

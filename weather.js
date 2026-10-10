@@ -5,6 +5,22 @@
 
   const CACHE_MS = 5 * 60 * 1000;
   const cache = new Map();
+  const pending = new Map();
+  const queue = [];
+  let active = 0;
+  // Bound traffic when a city has many mapped locations.
+  function limited(task) {
+    return new Promise((resolve, reject) => {
+      queue.push({task, resolve, reject});
+      drain();
+    });
+  }
+  function drain() {
+    while (active < 3 && queue.length) {
+      const {task, resolve, reject} = queue.shift(); active++;
+      Promise.resolve().then(task).then(resolve, reject).finally(() => { active--; drain(); });
+    }
+  }
   const popular = [
     ['北京', 39.90, 116.41], ['上海', 31.23, 121.47],
     ['广州', 23.13, 113.26], ['深圳', 22.54, 114.06],
@@ -115,30 +131,38 @@
     } catch (_) { throw new Error('城市查询暂时不可用，请稍后重试。'); }
   }
 
-  async function forecastDirect(city, force = false) {
-    const latitude = Number(city.latitude);
-    const longitude = Number(city.longitude);
+  async function forecastDirect(point, force = false) {
+    const latitude = Number(point.latitude);
+    const longitude = Number(point.longitude);
     if (!Number.isFinite(latitude) || !Number.isFinite(longitude) || latitude < 3 || latitude > 54 || longitude < 73 || longitude > 135)
-      throw new Error('请选取中国地区的城市。');
-    const key = `${latitude.toFixed(2)},${longitude.toFixed(2)}`;
+      throw new Error('这个地点尚无可用坐标，暂不能查询景点预报。');
+    // Keep the actual POI, rather than rounding every point to a city-sized cell.
+    const key = `${latitude.toFixed(6)},${longitude.toFixed(6)}`;
     const saved = cache.get(key);
-    const location = { name: city.name, latitude, longitude };
+    const location = { name: point.name, latitude, longitude };
     if (!force && saved && saved.expires > Date.now()) return { ...saved.data, location, cached: true, stale: false };
-    const query = new URLSearchParams({
-      latitude: latitude.toFixed(2), longitude: longitude.toFixed(2),
-      hourly: 'cloud_cover_low,cloud_cover_mid,cloud_cover_high,precipitation_probability,visibility',
-      daily: 'sunrise,sunset', timezone: 'Asia/Shanghai', forecast_days: 3
-    });
-    try {
-      const weather = await fetchJson(`https://api.open-meteo.com/v1/forecast?${query}`, 12000);
-      const data = { location, days: buildDays(weather), source: 'Open-Meteo',
-        method: '实验性云量规则 v1', updated_at: new Date().toISOString(), cached: false, stale: false };
-      cache.set(key, { expires: Date.now() + CACHE_MS, data });
-      return data;
-    } catch (_) {
-      if (saved) return { ...saved.data, location, cached: true, stale: true };
-      throw new Error('预测数据暂时不可用，请稍后重试。');
+    if (!pending.has(key)) {
+      const job = limited(async () => {
+        const query = new URLSearchParams({
+          latitude: latitude.toFixed(6), longitude: longitude.toFixed(6),
+          hourly: 'cloud_cover_low,cloud_cover_mid,cloud_cover_high,precipitation_probability,visibility',
+          daily: 'sunrise,sunset', timezone: 'Asia/Shanghai', forecast_days: 3
+        });
+        try {
+          const weather = await fetchJson(`https://api.open-meteo.com/v1/forecast?${query}`, 12000);
+          const data = { days: buildDays(weather), source: 'Open-Meteo',
+            grid: { latitude: weather.latitude, longitude: weather.longitude, elevation: weather.elevation },
+            method: '实验性云量规则 v1', updated_at: new Date().toISOString(), cached: false, stale: false };
+          cache.set(key, { expires: Date.now() + CACHE_MS, data });
+          return data;
+        } catch (_) {
+          if (saved) return { ...saved.data, cached: true, stale: true };
+          throw new Error('该景点的预测数据暂时不可用，请稍后重试。');
+        }
+      }).finally(() => pending.delete(key));
+      pending.set(key, job);
     }
+    return { ...await pending.get(key), location };
   }
 
   scope.citiesDirect = citiesDirect;

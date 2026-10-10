@@ -61,5 +61,5 @@ window.VIEWING_SPOTS = (() => {
  ['大帽山观景台','朝霞','登山线路上的开阔观景台，资料记录可看日出；需留意山上强风与步行条件。']]);
  add('台中','https://www.taiwan.net.tw/m1.aspx?id=r117&sNo=0001016',[
  ['高美湿地海堤','晚霞','湿地、海面与夕阳构成开阔景观，请遵守潮汐、步道和生态保护规定。']]);
- return rows;
+ return rows.map(spot=>({...spot,...(window.SPOT_COORDINATES||{})[spot.id]}));
 })();
