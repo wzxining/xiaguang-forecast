@@ -1,70 +1,95 @@
 <!doctype html>
-<html lang="zh-CN">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="giscus:backlink" content="https://wzxining.github.io/xiaguang-forecast/">
-  <meta name="theme-color" content="#101725">
-  <title>霞光观测站 · 朝霞晚霞观赏指数</title>
-  <link rel="stylesheet" href="style.css?v=20261010-charts44">
-</head>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f7f6f2"><title>霞时 · 晚霞预测与观赏计划</title><meta name="giscus:backlink" content="https://wzxining.github.io/xiaguang-forecast/"><link rel="stylesheet" href="style.css?v=e6c0f8e5"><link rel="stylesheet" href="frames.css?v=e6eed44e"></head>
 <body>
-  <div class="wrap">
-    <header><a class="brand" href="#home"><i></i>霞光观测站</a><nav aria-label="主导航"><a id="homeNav" href="#home" aria-current="page">霞光预报</a><a id="meNav" href="#me">我的观霞</a><button id="loginNav" class="soft" type="button">GitHub 登录</button></nav></header>
-    <main>
-    <div id="homePage">
-      <section class="hero">
-        <div>
-          <div class="eyebrow">CHASE THE LIGHT</div>
-          <h1>下一场霞光，<br>在哪里等你？</h1>
-          <div class="searchbox">
-            <div class="searchrow"><span aria-hidden="true">⌕</span><input id="cityInput" aria-label="搜索城市或景点" role="combobox" aria-autocomplete="list" aria-controls="suggestions" aria-expanded="false" autocomplete="off" placeholder="搜索城市或景点，如杭州、集贤亭"><button id="searchButton" type="button">找景点</button></div>
-            <div id="suggestions" class="suggestions" role="listbox" aria-label="城市与景点建议"></div>
-          </div>
-          <div id="quick" class="quick" aria-label="常用城市"></div>
-        </div>
-        <div class="illustration" role="img" aria-label="夕阳照亮云层和山脊的插画"><div class="cloud one"></div><div class="cloud two"></div><div class="ridge"></div><div class="photo-caption"><span>日落之后，云仍可能被照亮</span><span>°</span></div></div>
-      </section>
-      <section id="placesSection" aria-labelledby="placesTitle">
-        <div class="section-head"><div><div class="eyebrow">FIND YOUR VIEW</div><h2 id="placesTitle">成都 · 去哪里等霞光</h2></div><div class="section-meta"><span class="chart-key"><i class="dawn-dot"></i>朝霞 <i class="dusk-dot"></i>晚霞 · 指数 0–100</span></div></div>
+
+<a class="skip" href="#main">跳到页面内容</a><div class="drawer-shade" id="drawer-shade"></div>
+<aside class="sidebar" id="sidebar" aria-label="网站侧栏">
+<a href="#home" class="brand"><span class="brand-mark"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#sun"/></svg></span><span>霞时<small>SUNSET NOTES</small></span></a><button class="sidebar-close" id="sidebar-close" aria-label="关闭导航">×</button>
+<nav class="side-nav" aria-label="主导航">
+<a href="#home" class="nav-item" data-route="home"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#home"/></svg>主页</a>
+<a href="#favorites" class="nav-item" data-route="favorites"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#star-outline"/></svg>收藏地点</a>
+<a href="#plans" class="nav-item" data-route="plans"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#clock"/></svg>我的观赏计划</a>
+<a href="#photos" class="nav-item" data-route="photos"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#image"/></svg>分享图片</a>
+<a href="#contact" class="nav-item" data-route="contact"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#mail"/></svg>联系我们</a>
+</nav>
+<div class="sidebar-account"><button class="account-button" id="loginNav"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#user"/></svg><span class="account-label">登录 / 注册<small>收藏地点 · 分享晚霞</small></span><span class="account-chevron" hidden>›</span></button></div>
+</aside>
+<div class="workspace"><div class="content">
+<header class="topbar"><div class="mobile-brand"><a class="mobile-name" href="#home">霞时</a><button class="menu-button" id="menu-button" aria-label="打开导航" aria-expanded="false" aria-controls="sidebar"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#sun"/></svg></button></div>
+<h1 class="phone-search-title">寻找一处观测地点</h1>
+<a href="#home" class="phone-search-back">返回主页</a>
+<div class="search-controls"><a href="#search" class="phone-search-launch"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#search"/></svg>搜索地点</a><span id="toolbar-search-anchor" hidden></span><div class="search-wrap searchbox"><label class="search-box" for="cityInput"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#search"/></svg><input id="cityInput" type="search" role="combobox" aria-autocomplete="list" aria-label="搜索城市或景点" placeholder="搜索城市或景点" autocomplete="off" aria-controls="suggestions" aria-expanded="false"><kbd>⌘ K</kbd></label><button type="button" class="search-location-link" data-locate>使用当前位置</button><div id="suggestions" class="search-results" role="listbox" aria-label="城市与景点建议"></div></div><button class="btn location" id="locate"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#locate"/></svg><span class="wide-label">使用当前位置</span><span class="phone-label">定位</span></button><div class="location-status" id="location-status" role="status" hidden><span class="frame-icon location-icon"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#locate"/></svg></span><strong id="location-title"></strong><p id="location-message"></p><button type="button" class="btn" id="retry-location">重新定位</button><button class="btn" type="button" id="manual-search">手动搜索</button></div></div>
+<a class="search-return" href="#search"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#search"/></svg>搜索城市、区县或地标<kbd>⌘ K</kbd></a><div class="top-actions"><a href="#plans" id="plans-link"><span class="wide-label">我的观赏计划</span><span class="phone-label">我的计划</span> <span id="plan-count"></span></a><span class="badge">北京时间 · UTC+8</span></div></header>
+<main id="main" tabindex="-1"><section data-page="home" id="homePage">
+<div id="forecast-state" class="frame-page" hidden aria-live="polite">
+  <header class="page-heading"><div><h1 id="state-place"></h1><p id="state-subtitle"></p></div></header>
+  <div id="forecast-loading"><div class="forecast-skeleton" aria-hidden="true"><i></i><i></i><i></i><i></i></div><a class="btn secondary" href="#search">切换地点</a></div>
+  <div id="forecast-unavailable" class="frame-split" hidden><div class="frame-card state-card"><span class="frame-icon"><svg class="icon"><use href="assets/icons.svg#cloud"/></svg></span><h2>稍后再试，或换一个地点</h2><p id="state-error"></p><div class="actions"><button id="state-retry" class="btn primary">重新加载</button><a class="btn secondary" href="#search">切换地点</a></div></div><aside class="frame-note"><h2>先把地点选好</h2><p>数据恢复后，再根据对应日期的预测安排出发时间。</p></aside></div>
+</div>
+<div class="hero"><div><div class="hero-top"><div class="hero-meta"><span id="hero-date"></span><span id="mobile-source"></span><span class="hero-dot">·</span><span id="hero-source">正在获取预报</span></div></div><div class="hero-place"><h1 id="hero-city"></h1><button id="favorite-place" class="favorite-button" aria-label="收藏当前地点" aria-pressed="false"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#star-outline"/></svg></button></div><div class="outlook-line"><h2 id="result"></h2><select id="periodPicker" aria-label="切换朝霞或晚霞预报" title="切换朝霞或晚霞预报"><option value="sunset">晚霞预报</option><option value="sunrise">朝霞预报</option></select></div><p class="hero-summary" id="summary"></p><button class="btn" id="retry-hero" hidden>重试预报</button></div>
+<div class="hero-bottom"><div class="hero-schedule"><p class="hero-time-label">建议观赏时段</p><div id="window" class="hero-time"></div><p class="arrival"><strong id="arrival"></strong><small>预留找位置与准备的时间</small></p></div><div class="hero-side"><p class="sunset-label" hidden><span data-solar-label>日落时刻</span><strong id="sunset"></strong></p><button class="btn primary" id="save"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#clock"/></svg><span>保存观赏计划</span></button></div></div><small class="photo-caption">封面为氛围摄影</small></div>
+<section class="section timeline-section" data-needs-forecast aria-labelledby="timeline-title"><div class="section-heading"><div><h2 id="timeline-title">把握今晚的时间</h2></div><button class="text-link detail-open" data-explain="time">查看时间说明 ↗</button></div><p class="timeline-intro" id="timeline-intro"></p><div class="panel"><div class="timeline-axis" aria-label="观赏时间轴"><div class="timeline-track"></div><div class="timeline-window" title="边框内为建议观赏窗口"><span id="axis-label"></span></div><div class="timeline-marker" style="left:16.666%" data-moment="arrive"><strong id="marker-arrive"></strong><small>建议到达</small></div><div class="timeline-marker" style="left:50%" data-moment="sunset"><strong id="marker-sunset"></strong><small data-solar-label>日落时刻</small></div><div class="timeline-marker" style="left:83.333%" data-moment="end"><strong id="marker-end"></strong><small>观赏结束</small></div></div><p class="timeline-explain" id="timeline-feedback" aria-live="polite"></p><small id="time-source" class="fine-print"></small></div></section>
+<section class="section days-section" data-needs-forecast aria-labelledby="days-title"><div class="section-heading"><div><h2 id="days-title">未来三天</h2></div><p>点选日期，联动查看时段与条件</p></div><div class="days" id="forecast-tabs" role="group" aria-label="预测日期"></div></section>
+<div class="section details" data-needs-forecast><section class="panel" aria-labelledby="factors-title"><div class="section-heading"><h2 id="factors-title">气象条件解读</h2><a class="text-link" href="#score">怎么看 ↗</a></div>
+<p class="fine-print">各指标采用独立的 0–100% 刻度</p><div id="factors"></div><div class="factor-scale" aria-hidden="true"><span>0%</span><span>100%</span></div><p class="fine-print" id="factor-note"></p><p class="fine-print mobile-only-note">各项气象指标按地点与日期分别计算，观赏指数为实验性参考。</p></section>
+<section class="panel tip-panel"><div class="tip-heading"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#locate"/></svg><h2><a href="#advice">去哪里看</a></h2></div>
+<h3 id="tip-head">找一处西侧无遮挡的位置</h3><p class="tip-body" id="tip-body"></p>
+<a class="btn" href="#placesSection">搜索观测地点</a></section></div><p class="home-disclosure fine-print">气象数据来自 Open-Meteo，观赏条件会随实际天空变化。</p></section>
+<section data-page="places" class="subpage" hidden><section id="placesSection" aria-labelledby="placesTitle">
+        <div class="section-head"><div><h2 id="placesTitle">成都 · 去哪里等霞光</h2></div><div class="section-meta"><span class="chart-key"><i class="dawn-dot"></i>朝霞 <i class="dusk-dot"></i>晚霞 · 指数 0–100</span></div></div>
         <p id="placesNote" class="muted" aria-live="polite"></p>
         <div id="places" class="place-grid"></div>
         <div class="actions"><button id="morePlaces" class="soft" type="button">查找附近更多候选点</button><a id="mapCity" target="_blank" rel="noopener">在地图中找景点 ↗</a></div>
         <p class="fine">资料中有日出或日落记录的地点会标明时段；地图候选点尚未核实视野。景点按各自坐标查询，但气象网格有精度限制，临近地点可能预报相同。标注“景区参考点”的位置尚未细化到具体机位。出发前请查看开放、预约和交通信息。</p>
       </section>
       <section id="forecastSection" aria-live="polite">
-        <div class="section-head"><div><div class="eyebrow">CITY OVERVIEW</div><h2 id="locationTitle">成都 · 城市整体参考</h2><button id="saveCity" class="soft small" type="button">☆ 收藏城市</button></div><div id="updatedAt" class="section-meta">正在获取最新预报…</div></div>
+        <div class="section-head"><div><h2 id="locationTitle">成都 · 城市整体参考</h2><button id="saveCity" class="soft small" type="button">☆ 收藏城市</button></div><div id="updatedAt" class="section-meta">正在获取最新预报…</div></div>
         <p id="pointMeta" class="fine"></p><div class="forecast-tools"><a href="#placesSection">返回景点预报 ↑</a><button id="refreshForecasts" class="soft small" type="button">更新预报</button></div>
         <div id="status" class="status"></div>
         <div id="days" class="days"></div>
-        <p id="gridMeta" class="fine"></p><div class="explain"><strong>这个指数怎样计算？</strong> 它综合日出、日落前后的低云、中高云、降水可能性和能见度，属于实验性观赏参考。数值越高表示模型给出的观赏条件越好，<strong>不代表出现霞光的概率，也不保证实际景象</strong>。山地、局地云雾和远方云层会带来偏差。</div>
+        <p id="gridMeta" class="fine"></p><div class="explain" id="score-notes"><strong>这个指数怎样计算？</strong> 它综合日出、日落前后的低云、中高云、降水可能性和能见度，属于实验性观赏参考。数值越高表示模型给出的观赏条件越好，<strong>不代表出现霞光的概率，也不保证实际景象</strong>。山地、局地云雾和远方云层会带来偏差。</div>
       </section>
 
-    </div>
-    <section id="mePage" hidden>
-      <div class="eyebrow">MY LIGHT JOURNAL</div><h1 class="profile-title">我的观霞</h1>
-      <div class="account-card"><div><h2 id="accountName">访客收藏夹</h2><p id="accountNote">可先收藏城市和景点。使用下方留言区的 GitHub 登录后，可查看自己的留言。</p></div><button id="profileLogin" class="soft" type="button">前往登录 / 留言</button></div>
-      <p class="fine">收藏按 GitHub 账号保存在当前浏览器，不会自动同步到其他电脑；访客收藏单独保存。留言保存在公开的 GitHub 仓库，可跨设备查看。</p>
-      <div class="section-head"><h2>收藏的城市</h2><span id="cityCount" class="section-meta"></span></div><div id="savedCities" class="place-grid"></div>
-      <div class="section-head"><h2>收藏的景点</h2><span id="spotCount" class="section-meta"></span></div><div id="savedSpots" class="place-grid"></div>
-      <div class="actions"><button id="exportFavorites" class="soft small" type="button">导出收藏</button><label class="soft small import-label">导入收藏<input id="importFavorites" type="file" accept="application/json,.json"></label></div>
-    </section>
-    <section id="feedback" aria-labelledby="feedbackTitle">
-      <div class="section-head"><div><div class="eyebrow">LEAVE A LITTLE LIGHT</div><h2 id="feedbackTitle">留言与反馈</h2></div><a href="https://github.com/wzxining/xiaguang-forecast/discussions" target="_blank" rel="noopener">仓库留言区 ↗</a></div>
+</section><section class="subpage frame-page" data-page="favorites" hidden><div id="favorites-content"></div><div class="shelf-tools"><a href="#history">我的留言记录</a><button id="exportFavorites" class="quiet">导出收藏</button><label class="quiet import-label">导入收藏<input id="importFavorites" type="file" accept="application/json,.json"></label></div></section>
+<section class="subpage frame-page" data-page="plans" hidden><div class="page-heading"><div><h1>我的观赏计划</h1><p>把地点和时间安排好，给天空留一点余地。</p></div><a class="back-link" href="#home"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#back"/></svg>返回主页</a></div><div id="plans-content"></div></section>
+<section class="subpage frame-page" data-page="photos" hidden><div class="page-heading"><div><h1>分享图片</h1><p>收藏这一刻的天空，再把它分享给在意的人。</p></div><a class="back-link" href="#home"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#back"/></svg>返回主页</a></div><div id="photos-content"></div></section>
+<section class="subpage frame-page" data-page="login" hidden><div class="page-heading"><div><h1>登录 / 注册</h1><p>登录后继续刚才的操作。</p></div><a class="back-link" href="#home"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#back"/></svg>返回主页</a></div><div class="frame-split"><div class="frame-card login-card"><h2>选择一种方式继续</h2><a id="github-login" target="_top" class="btn secondary"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#github"/></svg>使用 GitHub 继续</a><a class="quiet" href="https://github.com/signup" target="_blank" rel="noopener">注册 GitHub 账号 ↗</a><p class="fine">通过 GitHub 授权后返回霞时。</p></div><aside class="frame-note"><span class="frame-icon"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#sun"/></svg></span><h2>把下一次晚霞，记在心里</h2><p>保存常用地点，快速查看预报。日期与时段保存在观赏计划中。</p></aside></div></section>
+<section class="subpage frame-page" data-page="contact" hidden><div class="page-heading"><div><h1>联系我们</h1><p>有问题或建议？给我们留言。</p></div><a class="back-link" href="#home"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#back"/></svg>返回主页</a></div><div id="message-receipt" class="frame-card state-card" hidden><span class="frame-icon"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#check"/></svg></span><h2>你的留言帖已更新</h2><p>仓库已返回新的留言记录。<a id="receipt-thread" target="_blank" rel="noopener">打开留言帖</a></p><div class="actions"><a href="#home" class="btn primary">返回主页</a><button id="new-message" class="btn secondary" type="button">继续留言</button></div></div><div class="frame-split"><form id="message-form" class="frame-card message-form" novalidate>
+<label for="message-body">留言 · 必填</label><div class="message-field"><textarea id="message-body" maxlength="500" required placeholder="请输入你想反馈的问题或建议"></textarea><small id="message-length">0 / 500</small></div>
+<p id="message-error" role="alert" hidden></p><label for="message-email">邮箱 · 选填</label><input id="message-email" type="email" placeholder="如愿公开联系邮箱，可留下邮箱" autocomplete="off">
+<div class="form-action"><button type="submit" class="btn primary">提交留言</button><small>将在仓库留言框中确认发布。</small></div></form><aside class="frame-note"><span class="frame-icon"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#mail"/></svg></span><h2>让下一次使用，更顺手</h2><p>你可以反馈搜索、预报展示或观赏计划中的问题。留言和选填邮箱随发布内容公开可见。</p></aside></div></section>
+<section class="subpage frame-page" data-page="history" hidden><div class="page-heading"><div><h1>仓库留言</h1><p>在 GitHub 留言框中发布，或查看自己的留言记录。</p></div><a class="back-link" href="#home"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#back"/></svg>返回主页</a></div><div id="publish-draft" class="draft-review" hidden><p id="publish-hint" role="status"></p><textarea id="publish-copy" readonly aria-label="待发布留言"></textarea><button class="quiet" id="copy-message">复制留言</button> · <a href="#contact">返回编辑</a> · <button class="quiet" id="dismiss-draft" type="button">关闭草稿</button></div><section id="feedback" aria-labelledby="feedbackTitle">
+      <div class="section-head"><div><h2 id="feedbackTitle">留言与反馈</h2></div><a href="https://github.com/wzxining/xiaguang-forecast/discussions" target="_blank" rel="noopener">仓库留言区 ↗</a></div>
       <p id="feedbackNote" class="muted">使用 GitHub 账号登录后留言，支持反馈问题、补充城市机位和分享观霞记录。留言公开可见。</p>
       <p class="fine">没有账号？<a href="https://github.com/signup" target="_blank" rel="noopener">注册 GitHub</a>。首次登录需同意 Giscus 代表你发布留言；本站不接触你的 GitHub 密码。</p>
       <div id="commentStatus" class="fine" role="status">正在连接留言服务…</div><button id="retryComments" class="soft small" type="button">重新连接留言</button><div class="giscus"></div>
       <a id="myDiscussion" hidden target="_blank" rel="noopener">在 GitHub 打开我的留言记录 ↗</a>
-    </section>
-    <div id="toast" role="status" aria-live="polite"></div>
-    </main>
-    <footer><span>霞光观测站 · 中国标准时间 UTC+8</span><span>气象数据：<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>；城市索引：<a href="https://github.com/88250/city-geo" target="_blank" rel="noopener">City Geo</a>（木兰宽松许可证第2版）；在线搜索：<a href="https://www.geonames.org/" target="_blank" rel="noopener">GeoNames</a>；景点坐标与候选地点：<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a>（ODbL）。</span></footer>
-  </div>
-  <script src="cities.js?v=20261010-charts44"></script>
-  <script src="spot-coordinates.js?v=20261010-charts44"></script>
-  <script src="spots.js?v=20261010-charts44"></script>
-  <script src="weather.js?v=20261010-charts44"></script>
-  <script src="app.js?v=20261010-charts44"></script>
-  <script src="community.js?v=20261010-charts44"></script>
+    </section></section>
+<section class="subpage frame-page" data-page="search" hidden><div class="page-heading"><div><h1>寻找一处观测地点</h1><p>搜索城市、区县或地标，选择之后查看预测。</p></div><a class="back-link" href="#home"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#back"/></svg>返回主页</a></div><div class="frame-split"><div class="frame-card search-card"><div id="search-slot"></div></div><aside class="frame-note"><span class="frame-icon"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#locate"/></svg></span><h2>也可以从当前位置开始</h2><p>使用当前位置匹配已收录的城市，也可以手动搜索城市或景点。</p><button class="btn secondary" data-locate>使用当前位置</button></aside></div></section>
+<section class="subpage frame-page" data-page="location" hidden><div class="page-heading"><div><h1>使用当前位置</h1><p>定位成功后更新预测地点。</p></div><a class="back-link" href="#home"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#back"/></svg>返回主页</a></div><div class="frame-split"><div class="mobile-location-tools"><a class="btn secondary" href="#search">搜索城市或景点</a><button class="btn secondary" data-locate>使用当前位置</button></div><div class="frame-card" id="location-panel"></div><aside class="frame-note"><span class="frame-icon"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#search"/></svg></span><h2>搜索始终可用</h2><p>也可以通过名称查看一个地点的预报。</p></aside></div></section>
+<section class="subpage frame-page" data-page="score" hidden><div class="page-heading"><div><h1>如何理解观赏条件</h1><p>看见结论，也理解它的边界。</p></div><a class="back-link" href="#home"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#back"/></svg>返回主页</a></div><div class="frame-card score-card"><div class="score-row"><div><strong id="live-score">—</strong> / 100</div><div><h2>观赏条件评分</h2><p id="score-place"></p><p>指数综合分层云量、降水概率和能见度。</p></div></div><div class="score-levels"><span>较佳　70–100 分</span><span>一般　40–69 分</span><span>偏低　0–39 分</span></div></div><h2 class="help-heading">使用时先看这三件事</h2><div class="guide-grid"><div><h3>值不值得看</h3><p>结合条件等级与当天实际天空判断。</p></div><div><h3>在哪里看</h3><p>选择视野开阔、可公开到达的地点。</p></div><div><h3>什么时候到</h3><p>先看建议到达时间，再看日出日落时刻和观赏窗口。</p></div></div></section>
+<section class="subpage frame-page" data-page="advice" hidden><div class="page-heading"><div><h1>去哪里看</h1><p>结合观赏方向与现场视野，选择位置。</p></div><a class="back-link" href="#home"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#back"/></svg>返回主页</a></div><div class="frame-card narrow-card"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#pin"/></svg><h2 id="advice-place"></h2><p id="advice-copy"></p><a class="btn primary" href="#placesSection">搜索观测地点</a></div></section>
+<section class="subpage frame-page" data-page="privacy" hidden><div class="page-heading"><div><h1>隐私说明</h1><p>霞时的数据与隐私</p></div><a class="back-link" href="#home"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#back"/></svg>返回主页</a></div><div class="frame-card prose-card"><section><h2>由你决定如何选择地点</h2><p>手动搜索即可查看预报。定位仅在你点击时请求，用于匹配最近的收录城市。</p></section><section><h2>留言信息由你选择</h2><p>GitHub 留言公开可见，联系邮箱为选填项。</p></section><section><h2>关于本机数据</h2><p>收藏、计划与图集保存在当前浏览器，清理站点数据会移除本机记录。</p></section></div></section>
+<section class="subpage frame-page" data-page="terms" hidden><div class="page-heading"><div><h1>使用说明</h1><p>了解预报，安排观赏。</p></div><a class="back-link" href="#home"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#back"/></svg>返回主页</a></div><div class="frame-card prose-card"><section><h2>了解气象预报</h2><p>本站按所选地点的坐标查询 Open-Meteo，邻近地点可能共用同一个天气网格。</p></section><section><h2>区分时刻与时段</h2><p>日出和日落各是一个时刻，建议观赏窗口根据该时刻推算。</p></section><section><h2>根据现场情况判断</h2><p>请结合现场云量、视野与开放时间安排出行。</p></section></div></section>
+<section class="subpage frame-page" data-page="sitemap" hidden><div class="page-heading"><div><h1>网站地图</h1><p>从这里找到下一步。</p></div><a class="back-link" href="#home"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#back"/></svg>返回主页</a></div><div id="site-map" class="map-grid"></div></section>
+
+</main><dialog id="forecast-detail" aria-labelledby="detail-title"><form method="dialog"><div class="dialog-header"><h2 id="detail-title"></h2><button aria-label="关闭说明" value="close">×</button></div><p id="detail-context"></p><p id="detail-copy"></p><button id="other-period" class="btn secondary" type="button" hidden></button><button class="btn primary">知道了</button></form></dialog><footer class="site-footer">
+<div class="foot-brand"><svg class="icon design-icon" aria-hidden="true"><use href="assets/icons.svg#sun"/></svg> 霞时　/　<span id="crumb">主页</span></div>
+<nav class="footer-columns" aria-label="页脚导航">
+<div><h3>晚霞预测</h3><a href="#home">主页</a><a href="#days-title">未来三天</a></div>
+<div><h3>观测地点</h3><a href="#search">搜索地点</a><a href="#location" data-locate>当前位置</a><a href="#favorites">收藏地点</a></div>
+<div><h3>观赏计划</h3><a href="#plans">我的观赏计划</a></div>
+<div><h3>预测帮助</h3><a href="#score">评分说明</a><a href="#advice">观赏建议</a></div>
+<div><h3>账户与支持</h3><a href="#login">登录 / 注册</a><a href="#contact">联系我们</a></div>
+</nav><div id="phone-footer" class="phone-footer"></div><p class="foot-help">需要帮助？　<a href="#contact">联系我们，提交留言</a></p><div class="foot-legal"><span>Copyright © 2026 霞时</span><a href="#privacy">隐私说明</a><a href="#terms">使用说明</a><a href="#sitemap">网站地图</a><span>中国大陆 · 简体中文</span></div><div class="source-credit"><span>中国标准时间 UTC+8</span><span>气象数据：<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>；城市索引：<a href="https://github.com/88250/city-geo" target="_blank" rel="noopener">City Geo</a>（木兰宽松许可证第2版）；在线搜索：<a href="https://www.geonames.org/" target="_blank" rel="noopener">GeoNames</a>；景点坐标与候选地点：<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a>（ODbL）。</span></div></footer></div></div><div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="cities.js"></script>
+  <script src="spot-coordinates.js"></script>
+  <script src="spots.js"></script>
+  <script src="weather.js?v=684dc5c3"></script>
+  <script src="app.js?v=0e6882d7"></script>
+  <script src="photos.js?v=43042ea3"></script>
+  <script src="dashboard.js?v=6e5bc009"></script>
+  <script src="views.js?v=ddbaa648"></script>
+  <script src="community.js?v=85021eae"></script>
 </body>
 </html>

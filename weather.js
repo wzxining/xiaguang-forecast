@@ -100,6 +100,7 @@
     const high = clamp(rawHigh);
     const rain = clamp(field('precipitation_probability') || 0);
     const visibility = field('visibility');
+    const humidity = field('relative_humidity_2m');
     const canvasCover = (mid + high) / 2;
     const canvas = clamp(100 - Math.abs(canvasCover - 45) * 1.45);
     const horizon = 100 - low;
@@ -119,6 +120,7 @@
     return {
       score, grade: score >= 70 ? '较佳' : score >= 40 ? '一般' : '偏低', reason,
       cloud_low: Math.round(low), cloud_mid: Math.round(mid), cloud_high: Math.round(high),
+      humidity_pct: humidity === null ? null : Math.round(clamp(humidity)),
       rain_probability: Math.round(rain), visibility_m: visibility === null ? null : Math.round(visibility)
     };
   }
@@ -210,14 +212,16 @@
     const key = coordinateKey({latitude,longitude});
     const saved = cache.get(key);
     const location = { name: point.name, latitude, longitude };
-    if (!force && usableSaved(saved) && saved.expires > Date.now()) return { ...saved.data, location, cached: true, stale: false };
+    if (!force && usableSaved(saved) && saved.expires > Date.now() &&
+        saved.data.days.every(day => ['sunrise','sunset'].every(kind => Object.hasOwn(day[kind], 'humidity_pct'))))
+      return { ...saved.data, location, cached: true, stale: false };
     if (pending.has(key) && controllers.get(key)?.signal.aborted) pending.delete(key);
     if (!pending.has(key)) {
       const controller = new AbortController(); controllers.set(key,controller);
       const job = limited(async () => {
         const query = new URLSearchParams({
           latitude: latitude.toFixed(6), longitude: longitude.toFixed(6),
-          hourly: 'cloud_cover_low,cloud_cover_mid,cloud_cover_high,precipitation_probability,visibility',
+          hourly: 'cloud_cover_low,cloud_cover_mid,cloud_cover_high,precipitation_probability,visibility,relative_humidity_2m',
           daily: 'sunrise,sunset', timezone: 'Asia/Shanghai', forecast_days: 3
         });
         try {

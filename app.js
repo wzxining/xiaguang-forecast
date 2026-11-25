@@ -60,7 +60,8 @@ async function fetchSelected(force=false) {
 function closeSuggestions(){++searchSerial;clearTimeout(searchTimer);suggestions.replaceChildren();activeOption=-1;input.setAttribute('aria-expanded','false');input.removeAttribute('aria-activedescendant');}
 function load(city, force=false, preferredSpot=null) {
   if(force){refreshForecasts();return;}
-  selected=city; selectedSpot=preferredSpot?resolveSpot(preferredSpot):spotsForCity(city).find(hasCoordinates)||null;
+  if(document.getElementById('homePage').hidden)location.hash='home';
+  selected=city; selectedSpot=preferredSpot?resolveSpot(preferredSpot):null;
   closeSuggestions();input.value='';input.placeholder='搜索城市或景点 · 当前'+city.name;
   setForecastScope([city,...spotsForCity(city),selectedSpot].filter(hasCoordinates));
   window.dispatchEvent(new CustomEvent('citychange',{detail:city}));
@@ -68,7 +69,7 @@ function load(city, force=false, preferredSpot=null) {
 }
 function selectSpot(spot,city=selected,scroll=true){
   spot=resolveSpot(spot);load(city,false,spot);location.hash='home';
-  if(scroll){const card=[...document.querySelectorAll('#places .place')].find(c=>c.dataset.spotId===spot.id);(card||document.getElementById('placesSection')).scrollIntoView({behavior:'smooth',block:'start'});}
+  if(scroll)window.scrollTo({top:0,behavior:'instant'});
 }
 function refreshForecasts(){fetchSelected(true);window.dispatchEvent(new CustomEvent('forecastrefresh'));}
 function searchHeading(text){line(suggestions,'div','search-heading',text).setAttribute('role','presentation');}
@@ -77,7 +78,8 @@ function searchOption(title,note,action,kind=''){
   const label=line(b,'span','','');line(label,'strong','',title);line(label,'small','',note);line(b,'span','option-arrow','↗');
   b.addEventListener('click',action);suggestions.appendChild(b);input.setAttribute('aria-expanded','true');
 }
-function recommended(){closeSuggestions();searchHeading('推荐城市 · 选择后查看全部已收录景点');presets.forEach(city=>searchOption(city.name,spotsForCity(city).length+' 处已收录景点',()=>load(city)));}
+function openCityPlaces(city){load(city);location.hash='placesSection';}
+function recommended(){closeSuggestions();searchHeading('推荐城市 · 选择后查看全部已收录景点');presets.forEach(city=>searchOption(city.name,spotsForCity(city).length+' 处已收录景点',()=>openCityPlaces(city)));}
 function showSearchResults(cities,query){
   suggestions.replaceChildren();activeOption=-1;input.removeAttribute('aria-activedescendant');
   const named=cityName(query), exact=cities.find(c=>cityName(c.name)===named);
@@ -85,14 +87,20 @@ function showSearchResults(cities,query){
   let count=0;
   matches.forEach(city=>{
     const spots=spotsForCity(city);
-    searchOption(city.name,spots.length?'查看本站已收录的全部 '+spots.length+' 处景点':'景点资料待补充 · 可查找附近候选点',()=>load(city),'city-option');
+    searchOption(city.name,spots.length?'查看本站已收录的全部 '+spots.length+' 处景点':'景点资料待补充 · 可查找附近候选点',()=>openCityPlaces(city),'city-option');
     spots.forEach(spot=>{count++;searchOption(spot.name,city.name+' · '+spot.kind+' · '+(hasCoordinates(spot)?'景点独立预报':'坐标待核实'),()=>selectSpot(spot,city),'spot-option');});
   });
   if(!cities.length){
     const spots=window.VIEWING_SPOTS.filter(s=>s.name.includes(query));
     spots.forEach(spot=>{const city=[...presets,...window.CITY_INDEX].find(c=>cityName(c.name)===spot.city);if(city){count++;searchOption(spot.name,spot.city+' · '+spot.kind,()=>selectSpot(spot,city),'spot-option');}});
   }
-  if(!suggestions.querySelector('[role=option]'))searchHeading('尚未找到已收录城市或景点，试试完整城市名。');
+  if(!suggestions.querySelector('[role=option]')){
+    if(document.body.dataset.page==='search'){
+      const empty=line(suggestions,'div','search-empty-state','');
+      line(empty,'h2','','没有找到“'+query+'”');line(empty,'p','','试试城市、区县的全称，或附近的地标。');
+      const edit=line(empty,'button','btn primary','修改关键词');edit.type='button';edit.onclick=()=>{input.focus();input.select();};
+    }else searchHeading('尚未找到已收录城市或景点，试试完整城市名。');
+  }
   else searchHeading(count?'已列出匹配城市的全部已收录景点；名录仍在补充。':'选择城市后可继续查找附近地点。');
   input.setAttribute('aria-expanded','true');
 }
@@ -120,10 +128,9 @@ input.addEventListener('keydown',event=>{
     input.setAttribute('aria-activedescendant',options[activeOption].id);options[activeOption].scrollIntoView({block:'nearest'});
   }else if(event.key==='Enter'){event.preventDefault();if(activeOption>=0&&options[activeOption])options[activeOption].click();else search();}
 });
-document.getElementById('searchButton').addEventListener('click',search);
+
 document.addEventListener('click',event=>{if(!event.target.closest('.searchbox'))closeSuggestions();});
 suggestions.addEventListener('focusout',event=>{if(event.relatedTarget&&!event.relatedTarget.closest('.searchbox'))closeSuggestions();});
-presets.slice(0,6).forEach(city=>{const b=line(document.getElementById('quick'),'button','',city.name);b.type='button';b.onclick=()=>load(city);});
 setInterval(()=>{if(!document.hidden)refreshForecasts();},5*60*1000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-lastRefreshAt>=5*60*1000)refreshForecasts();});
 document.getElementById('refreshForecasts').onclick=refreshForecasts;

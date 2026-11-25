@@ -2,7 +2,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs'), vm=require('node:vm'),path=require('node:path');
 const source=fs.readFileSync(path.join(__dirname,'..','weather.js'),'utf8');
 const now=Date.parse('2026-10-10T10:00:00Z');
-function fixture(){return {latitude:22.5,longitude:113.9,hourly:{time:['2026-10-10T06:00','2026-10-10T18:00'],cloud_cover_low:[10,20],cloud_cover_mid:[40,60],cloud_cover_high:[30,70],precipitation_probability:[0,0],visibility:[10000,10000]},daily:{time:['2026-10-10'],sunrise:['2026-10-10T06:00'],sunset:['2026-10-10T18:00']}};}
+function fixture(){return {latitude:22.5,longitude:113.9,hourly:{time:['2026-10-10T06:00','2026-10-10T18:00'],cloud_cover_low:[10,20],cloud_cover_mid:[40,60],cloud_cover_high:[30,70],precipitation_probability:[0,0],visibility:[10000,10000],relative_humidity_2m:[88,63]},daily:{time:['2026-10-10'],sunrise:['2026-10-10T06:00'],sunset:['2026-10-10T18:00']}};}
 const point={name:'白鹭坡',latitude:22.5217757,longitude:113.9671077};
 const ok=()=>({ok:true,json:async()=>fixture()});
 function env(fetch,storage=new Map(),time=now,timer=setTimeout){
@@ -17,6 +17,8 @@ function env(fetch,storage=new Map(),time=now,timer=setTimeout){
  const recovered=env(async()=>{if(++calls===1)throw new TypeError('Failed to fetch');return ok();});
  const d=await recovered.api.forecastDirect(point);assert.equal(calls,2);assert.equal(d.stale,false);
  assert.equal(d.location.latitude,point.latitude);
+ assert.equal(d.days[0].sunrise.humidity_pct,88);assert.equal(d.days[0].sunset.humidity_pct,63);
+ const oldWeather=fixture();delete oldWeather.hourly.relative_humidity_2m;assert.equal(recovered.api.buildDays(oldWeather)[0].sunset.humidity_pct,null);
  let offlineCalls=0;
  const reloaded=env(async()=>{offlineCalls++;throw new TypeError('offline');},recovered.storage);
  assert.equal((await reloaded.api.forecastDirect(point)).cached,true);assert.equal(offlineCalls,0,'fresh disk cache must survive reload');
